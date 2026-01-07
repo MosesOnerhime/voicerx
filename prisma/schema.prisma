@@ -1,0 +1,94 @@
+generator client {
+  provider        = "prisma-client" // or `prisma-client-js`
+  output          = "../generated/prisma"
+  engineType      = "client" // enable Prisma ORM without Rust
+}
+// generator client {
+//   provider = "prisma-client-js"
+// }
+
+datasource db {
+  provider = "postgresql"
+  // url      = env("DATABASE_URL")
+}
+
+model Hospital {
+  id                 String    @id @default(cuid())
+  hospitalName       String
+  email              String    @unique
+  password           String
+  address            String
+  phone              String
+  registrationNumber String    @unique
+  isVerified         Boolean   @default(false)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  
+  patients           Patient[]
+  appointments       Appointment[]
+}
+
+model Patient {
+  id               String    @id @default(cuid())
+  firstName        String
+  lastName         String
+  dateOfBirth      DateTime
+  gender           String
+  email            String?
+  phone            String
+  address          String
+  bloodGroup       String?
+  allergies        String?
+  medicalHistory   String?
+  emergencyContact String
+  emergencyPhone   String
+  
+  hospitalId       String
+  hospital         Hospital  @relation(fields: [hospitalId], references: [id])
+  
+  appointments     Appointment[]
+  medicalRecords   MedicalRecord[]
+  
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  
+  @@index([hospitalId])
+  @@index([email])
+}
+
+model Appointment {
+  id          String   @id @default(cuid())
+  patientId   String
+  patient     Patient  @relation(fields: [patientId], references: [id])
+  hospitalId  String
+  hospital    Hospital @relation(fields: [hospitalId], references: [id])
+  
+  appointmentDate DateTime
+  reason      String
+  status      String   @default("scheduled") // scheduled, completed, cancelled
+  notes       String?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([patientId])
+  @@index([hospitalId])
+  @@index([appointmentDate])
+}
+
+model MedicalRecord {
+  id          String   @id @default(cuid())
+  patientId   String
+  patient     Patient  @relation(fields: [patientId], references: [id])
+  
+  visitDate   DateTime
+  diagnosis   String
+  prescription String?
+  notes       String?
+  doctorName  String
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([patientId])
+}
