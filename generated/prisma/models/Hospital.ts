@@ -26,39 +26,42 @@ export type AggregateHospital = {
 
 export type HospitalMinAggregateOutputType = {
   id: string | null
-  hospitalName: string | null
+  name: string | null
   email: string | null
-  password: string | null
-  address: string | null
   phone: string | null
+  address: string | null
+  logoUrl: string | null
   registrationNumber: string | null
-  isVerified: boolean | null
+  isActive: boolean | null
+  registeredAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
 
 export type HospitalMaxAggregateOutputType = {
   id: string | null
-  hospitalName: string | null
+  name: string | null
   email: string | null
-  password: string | null
-  address: string | null
   phone: string | null
+  address: string | null
+  logoUrl: string | null
   registrationNumber: string | null
-  isVerified: boolean | null
+  isActive: boolean | null
+  registeredAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
 
 export type HospitalCountAggregateOutputType = {
   id: number
-  hospitalName: number
+  name: number
   email: number
-  password: number
-  address: number
   phone: number
+  address: number
+  logoUrl: number
   registrationNumber: number
-  isVerified: number
+  isActive: number
+  registeredAt: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -67,39 +70,42 @@ export type HospitalCountAggregateOutputType = {
 
 export type HospitalMinAggregateInputType = {
   id?: true
-  hospitalName?: true
+  name?: true
   email?: true
-  password?: true
-  address?: true
   phone?: true
+  address?: true
+  logoUrl?: true
   registrationNumber?: true
-  isVerified?: true
+  isActive?: true
+  registeredAt?: true
   createdAt?: true
   updatedAt?: true
 }
 
 export type HospitalMaxAggregateInputType = {
   id?: true
-  hospitalName?: true
+  name?: true
   email?: true
-  password?: true
-  address?: true
   phone?: true
+  address?: true
+  logoUrl?: true
   registrationNumber?: true
-  isVerified?: true
+  isActive?: true
+  registeredAt?: true
   createdAt?: true
   updatedAt?: true
 }
 
 export type HospitalCountAggregateInputType = {
   id?: true
-  hospitalName?: true
+  name?: true
   email?: true
-  password?: true
-  address?: true
   phone?: true
+  address?: true
+  logoUrl?: true
   registrationNumber?: true
-  isVerified?: true
+  isActive?: true
+  registeredAt?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -179,13 +185,14 @@ export type HospitalGroupByArgs<ExtArgs extends runtime.Types.Extensions.Interna
 
 export type HospitalGroupByOutputType = {
   id: string
-  hospitalName: string
+  name: string
   email: string
-  password: string
-  address: string
   phone: string
-  registrationNumber: string
-  isVerified: boolean
+  address: string | null
+  logoUrl: string | null
+  registrationNumber: string | null
+  isActive: boolean
+  registeredAt: Date
   createdAt: Date
   updatedAt: Date
   _count: HospitalCountAggregateOutputType | null
@@ -213,30 +220,34 @@ export type HospitalWhereInput = {
   OR?: Prisma.HospitalWhereInput[]
   NOT?: Prisma.HospitalWhereInput | Prisma.HospitalWhereInput[]
   id?: Prisma.StringFilter<"Hospital"> | string
-  hospitalName?: Prisma.StringFilter<"Hospital"> | string
+  name?: Prisma.StringFilter<"Hospital"> | string
   email?: Prisma.StringFilter<"Hospital"> | string
-  password?: Prisma.StringFilter<"Hospital"> | string
-  address?: Prisma.StringFilter<"Hospital"> | string
   phone?: Prisma.StringFilter<"Hospital"> | string
-  registrationNumber?: Prisma.StringFilter<"Hospital"> | string
-  isVerified?: Prisma.BoolFilter<"Hospital"> | boolean
+  address?: Prisma.StringNullableFilter<"Hospital"> | string | null
+  logoUrl?: Prisma.StringNullableFilter<"Hospital"> | string | null
+  registrationNumber?: Prisma.StringNullableFilter<"Hospital"> | string | null
+  isActive?: Prisma.BoolFilter<"Hospital"> | boolean
+  registeredAt?: Prisma.DateTimeFilter<"Hospital"> | Date | string
   createdAt?: Prisma.DateTimeFilter<"Hospital"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Hospital"> | Date | string
+  users?: Prisma.UserListRelationFilter
   patients?: Prisma.PatientListRelationFilter
   appointments?: Prisma.AppointmentListRelationFilter
 }
 
 export type HospitalOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  hospitalName?: Prisma.SortOrder
+  name?: Prisma.SortOrder
   email?: Prisma.SortOrder
-  password?: Prisma.SortOrder
-  address?: Prisma.SortOrder
   phone?: Prisma.SortOrder
-  registrationNumber?: Prisma.SortOrder
-  isVerified?: Prisma.SortOrder
+  address?: Prisma.SortOrderInput | Prisma.SortOrder
+  logoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  registrationNumber?: Prisma.SortOrderInput | Prisma.SortOrder
+  isActive?: Prisma.SortOrder
+  registeredAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  users?: Prisma.UserOrderByRelationAggregateInput
   patients?: Prisma.PatientOrderByRelationAggregateInput
   appointments?: Prisma.AppointmentOrderByRelationAggregateInput
 }
@@ -244,30 +255,33 @@ export type HospitalOrderByWithRelationInput = {
 export type HospitalWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   email?: string
-  registrationNumber?: string
   AND?: Prisma.HospitalWhereInput | Prisma.HospitalWhereInput[]
   OR?: Prisma.HospitalWhereInput[]
   NOT?: Prisma.HospitalWhereInput | Prisma.HospitalWhereInput[]
-  hospitalName?: Prisma.StringFilter<"Hospital"> | string
-  password?: Prisma.StringFilter<"Hospital"> | string
-  address?: Prisma.StringFilter<"Hospital"> | string
+  name?: Prisma.StringFilter<"Hospital"> | string
   phone?: Prisma.StringFilter<"Hospital"> | string
-  isVerified?: Prisma.BoolFilter<"Hospital"> | boolean
+  address?: Prisma.StringNullableFilter<"Hospital"> | string | null
+  logoUrl?: Prisma.StringNullableFilter<"Hospital"> | string | null
+  registrationNumber?: Prisma.StringNullableFilter<"Hospital"> | string | null
+  isActive?: Prisma.BoolFilter<"Hospital"> | boolean
+  registeredAt?: Prisma.DateTimeFilter<"Hospital"> | Date | string
   createdAt?: Prisma.DateTimeFilter<"Hospital"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Hospital"> | Date | string
+  users?: Prisma.UserListRelationFilter
   patients?: Prisma.PatientListRelationFilter
   appointments?: Prisma.AppointmentListRelationFilter
-}, "id" | "email" | "registrationNumber">
+}, "id" | "email">
 
 export type HospitalOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  hospitalName?: Prisma.SortOrder
+  name?: Prisma.SortOrder
   email?: Prisma.SortOrder
-  password?: Prisma.SortOrder
-  address?: Prisma.SortOrder
   phone?: Prisma.SortOrder
-  registrationNumber?: Prisma.SortOrder
-  isVerified?: Prisma.SortOrder
+  address?: Prisma.SortOrderInput | Prisma.SortOrder
+  logoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  registrationNumber?: Prisma.SortOrderInput | Prisma.SortOrder
+  isActive?: Prisma.SortOrder
+  registeredAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.HospitalCountOrderByAggregateInput
@@ -280,151 +294,166 @@ export type HospitalScalarWhereWithAggregatesInput = {
   OR?: Prisma.HospitalScalarWhereWithAggregatesInput[]
   NOT?: Prisma.HospitalScalarWhereWithAggregatesInput | Prisma.HospitalScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Hospital"> | string
-  hospitalName?: Prisma.StringWithAggregatesFilter<"Hospital"> | string
+  name?: Prisma.StringWithAggregatesFilter<"Hospital"> | string
   email?: Prisma.StringWithAggregatesFilter<"Hospital"> | string
-  password?: Prisma.StringWithAggregatesFilter<"Hospital"> | string
-  address?: Prisma.StringWithAggregatesFilter<"Hospital"> | string
   phone?: Prisma.StringWithAggregatesFilter<"Hospital"> | string
-  registrationNumber?: Prisma.StringWithAggregatesFilter<"Hospital"> | string
-  isVerified?: Prisma.BoolWithAggregatesFilter<"Hospital"> | boolean
+  address?: Prisma.StringNullableWithAggregatesFilter<"Hospital"> | string | null
+  logoUrl?: Prisma.StringNullableWithAggregatesFilter<"Hospital"> | string | null
+  registrationNumber?: Prisma.StringNullableWithAggregatesFilter<"Hospital"> | string | null
+  isActive?: Prisma.BoolWithAggregatesFilter<"Hospital"> | boolean
+  registeredAt?: Prisma.DateTimeWithAggregatesFilter<"Hospital"> | Date | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Hospital"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Hospital"> | Date | string
 }
 
 export type HospitalCreateInput = {
   id?: string
-  hospitalName: string
+  name: string
   email: string
-  password: string
-  address: string
   phone: string
-  registrationNumber: string
-  isVerified?: boolean
+  address?: string | null
+  logoUrl?: string | null
+  registrationNumber?: string | null
+  isActive?: boolean
+  registeredAt?: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
+  users?: Prisma.UserCreateNestedManyWithoutHospitalInput
   patients?: Prisma.PatientCreateNestedManyWithoutHospitalInput
   appointments?: Prisma.AppointmentCreateNestedManyWithoutHospitalInput
 }
 
 export type HospitalUncheckedCreateInput = {
   id?: string
-  hospitalName: string
+  name: string
   email: string
-  password: string
-  address: string
   phone: string
-  registrationNumber: string
-  isVerified?: boolean
+  address?: string | null
+  logoUrl?: string | null
+  registrationNumber?: string | null
+  isActive?: boolean
+  registeredAt?: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
+  users?: Prisma.UserUncheckedCreateNestedManyWithoutHospitalInput
   patients?: Prisma.PatientUncheckedCreateNestedManyWithoutHospitalInput
   appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutHospitalInput
 }
 
 export type HospitalUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  hospitalName?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  password?: Prisma.StringFieldUpdateOperationsInput | string
-  address?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
-  registrationNumber?: Prisma.StringFieldUpdateOperationsInput | string
-  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  users?: Prisma.UserUpdateManyWithoutHospitalNestedInput
   patients?: Prisma.PatientUpdateManyWithoutHospitalNestedInput
   appointments?: Prisma.AppointmentUpdateManyWithoutHospitalNestedInput
 }
 
 export type HospitalUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  hospitalName?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  password?: Prisma.StringFieldUpdateOperationsInput | string
-  address?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
-  registrationNumber?: Prisma.StringFieldUpdateOperationsInput | string
-  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  users?: Prisma.UserUncheckedUpdateManyWithoutHospitalNestedInput
   patients?: Prisma.PatientUncheckedUpdateManyWithoutHospitalNestedInput
   appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutHospitalNestedInput
 }
 
 export type HospitalCreateManyInput = {
   id?: string
-  hospitalName: string
+  name: string
   email: string
-  password: string
-  address: string
   phone: string
-  registrationNumber: string
-  isVerified?: boolean
+  address?: string | null
+  logoUrl?: string | null
+  registrationNumber?: string | null
+  isActive?: boolean
+  registeredAt?: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type HospitalUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  hospitalName?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  password?: Prisma.StringFieldUpdateOperationsInput | string
-  address?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
-  registrationNumber?: Prisma.StringFieldUpdateOperationsInput | string
-  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type HospitalUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  hospitalName?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  password?: Prisma.StringFieldUpdateOperationsInput | string
-  address?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
-  registrationNumber?: Prisma.StringFieldUpdateOperationsInput | string
-  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type HospitalCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  hospitalName?: Prisma.SortOrder
+  name?: Prisma.SortOrder
   email?: Prisma.SortOrder
-  password?: Prisma.SortOrder
-  address?: Prisma.SortOrder
   phone?: Prisma.SortOrder
+  address?: Prisma.SortOrder
+  logoUrl?: Prisma.SortOrder
   registrationNumber?: Prisma.SortOrder
-  isVerified?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
+  registeredAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type HospitalMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  hospitalName?: Prisma.SortOrder
+  name?: Prisma.SortOrder
   email?: Prisma.SortOrder
-  password?: Prisma.SortOrder
-  address?: Prisma.SortOrder
   phone?: Prisma.SortOrder
+  address?: Prisma.SortOrder
+  logoUrl?: Prisma.SortOrder
   registrationNumber?: Prisma.SortOrder
-  isVerified?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
+  registeredAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type HospitalMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  hospitalName?: Prisma.SortOrder
+  name?: Prisma.SortOrder
   email?: Prisma.SortOrder
-  password?: Prisma.SortOrder
-  address?: Prisma.SortOrder
   phone?: Prisma.SortOrder
+  address?: Prisma.SortOrder
+  logoUrl?: Prisma.SortOrder
   registrationNumber?: Prisma.SortOrder
-  isVerified?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
+  registeredAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -438,12 +467,30 @@ export type StringFieldUpdateOperationsInput = {
   set?: string
 }
 
+export type NullableStringFieldUpdateOperationsInput = {
+  set?: string | null
+}
+
 export type BoolFieldUpdateOperationsInput = {
   set?: boolean
 }
 
 export type DateTimeFieldUpdateOperationsInput = {
   set?: Date | string
+}
+
+export type HospitalCreateNestedOneWithoutUsersInput = {
+  create?: Prisma.XOR<Prisma.HospitalCreateWithoutUsersInput, Prisma.HospitalUncheckedCreateWithoutUsersInput>
+  connectOrCreate?: Prisma.HospitalCreateOrConnectWithoutUsersInput
+  connect?: Prisma.HospitalWhereUniqueInput
+}
+
+export type HospitalUpdateOneRequiredWithoutUsersNestedInput = {
+  create?: Prisma.XOR<Prisma.HospitalCreateWithoutUsersInput, Prisma.HospitalUncheckedCreateWithoutUsersInput>
+  connectOrCreate?: Prisma.HospitalCreateOrConnectWithoutUsersInput
+  upsert?: Prisma.HospitalUpsertWithoutUsersInput
+  connect?: Prisma.HospitalWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.HospitalUpdateToOneWithWhereWithoutUsersInput, Prisma.HospitalUpdateWithoutUsersInput>, Prisma.HospitalUncheckedUpdateWithoutUsersInput>
 }
 
 export type HospitalCreateNestedOneWithoutPatientsInput = {
@@ -474,31 +521,115 @@ export type HospitalUpdateOneRequiredWithoutAppointmentsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.HospitalUpdateToOneWithWhereWithoutAppointmentsInput, Prisma.HospitalUpdateWithoutAppointmentsInput>, Prisma.HospitalUncheckedUpdateWithoutAppointmentsInput>
 }
 
-export type HospitalCreateWithoutPatientsInput = {
+export type HospitalCreateWithoutUsersInput = {
   id?: string
-  hospitalName: string
+  name: string
   email: string
-  password: string
-  address: string
   phone: string
-  registrationNumber: string
-  isVerified?: boolean
+  address?: string | null
+  logoUrl?: string | null
+  registrationNumber?: string | null
+  isActive?: boolean
+  registeredAt?: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
+  patients?: Prisma.PatientCreateNestedManyWithoutHospitalInput
+  appointments?: Prisma.AppointmentCreateNestedManyWithoutHospitalInput
+}
+
+export type HospitalUncheckedCreateWithoutUsersInput = {
+  id?: string
+  name: string
+  email: string
+  phone: string
+  address?: string | null
+  logoUrl?: string | null
+  registrationNumber?: string | null
+  isActive?: boolean
+  registeredAt?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  patients?: Prisma.PatientUncheckedCreateNestedManyWithoutHospitalInput
+  appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutHospitalInput
+}
+
+export type HospitalCreateOrConnectWithoutUsersInput = {
+  where: Prisma.HospitalWhereUniqueInput
+  create: Prisma.XOR<Prisma.HospitalCreateWithoutUsersInput, Prisma.HospitalUncheckedCreateWithoutUsersInput>
+}
+
+export type HospitalUpsertWithoutUsersInput = {
+  update: Prisma.XOR<Prisma.HospitalUpdateWithoutUsersInput, Prisma.HospitalUncheckedUpdateWithoutUsersInput>
+  create: Prisma.XOR<Prisma.HospitalCreateWithoutUsersInput, Prisma.HospitalUncheckedCreateWithoutUsersInput>
+  where?: Prisma.HospitalWhereInput
+}
+
+export type HospitalUpdateToOneWithWhereWithoutUsersInput = {
+  where?: Prisma.HospitalWhereInput
+  data: Prisma.XOR<Prisma.HospitalUpdateWithoutUsersInput, Prisma.HospitalUncheckedUpdateWithoutUsersInput>
+}
+
+export type HospitalUpdateWithoutUsersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  patients?: Prisma.PatientUpdateManyWithoutHospitalNestedInput
+  appointments?: Prisma.AppointmentUpdateManyWithoutHospitalNestedInput
+}
+
+export type HospitalUncheckedUpdateWithoutUsersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  patients?: Prisma.PatientUncheckedUpdateManyWithoutHospitalNestedInput
+  appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutHospitalNestedInput
+}
+
+export type HospitalCreateWithoutPatientsInput = {
+  id?: string
+  name: string
+  email: string
+  phone: string
+  address?: string | null
+  logoUrl?: string | null
+  registrationNumber?: string | null
+  isActive?: boolean
+  registeredAt?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  users?: Prisma.UserCreateNestedManyWithoutHospitalInput
   appointments?: Prisma.AppointmentCreateNestedManyWithoutHospitalInput
 }
 
 export type HospitalUncheckedCreateWithoutPatientsInput = {
   id?: string
-  hospitalName: string
+  name: string
   email: string
-  password: string
-  address: string
   phone: string
-  registrationNumber: string
-  isVerified?: boolean
+  address?: string | null
+  logoUrl?: string | null
+  registrationNumber?: string | null
+  isActive?: boolean
+  registeredAt?: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
+  users?: Prisma.UserUncheckedCreateNestedManyWithoutHospitalInput
   appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutHospitalInput
 }
 
@@ -520,57 +651,65 @@ export type HospitalUpdateToOneWithWhereWithoutPatientsInput = {
 
 export type HospitalUpdateWithoutPatientsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  hospitalName?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  password?: Prisma.StringFieldUpdateOperationsInput | string
-  address?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
-  registrationNumber?: Prisma.StringFieldUpdateOperationsInput | string
-  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  users?: Prisma.UserUpdateManyWithoutHospitalNestedInput
   appointments?: Prisma.AppointmentUpdateManyWithoutHospitalNestedInput
 }
 
 export type HospitalUncheckedUpdateWithoutPatientsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  hospitalName?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  password?: Prisma.StringFieldUpdateOperationsInput | string
-  address?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
-  registrationNumber?: Prisma.StringFieldUpdateOperationsInput | string
-  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  users?: Prisma.UserUncheckedUpdateManyWithoutHospitalNestedInput
   appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutHospitalNestedInput
 }
 
 export type HospitalCreateWithoutAppointmentsInput = {
   id?: string
-  hospitalName: string
+  name: string
   email: string
-  password: string
-  address: string
   phone: string
-  registrationNumber: string
-  isVerified?: boolean
+  address?: string | null
+  logoUrl?: string | null
+  registrationNumber?: string | null
+  isActive?: boolean
+  registeredAt?: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
+  users?: Prisma.UserCreateNestedManyWithoutHospitalInput
   patients?: Prisma.PatientCreateNestedManyWithoutHospitalInput
 }
 
 export type HospitalUncheckedCreateWithoutAppointmentsInput = {
   id?: string
-  hospitalName: string
+  name: string
   email: string
-  password: string
-  address: string
   phone: string
-  registrationNumber: string
-  isVerified?: boolean
+  address?: string | null
+  logoUrl?: string | null
+  registrationNumber?: string | null
+  isActive?: boolean
+  registeredAt?: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
+  users?: Prisma.UserUncheckedCreateNestedManyWithoutHospitalInput
   patients?: Prisma.PatientUncheckedCreateNestedManyWithoutHospitalInput
 }
 
@@ -592,29 +731,33 @@ export type HospitalUpdateToOneWithWhereWithoutAppointmentsInput = {
 
 export type HospitalUpdateWithoutAppointmentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  hospitalName?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  password?: Prisma.StringFieldUpdateOperationsInput | string
-  address?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
-  registrationNumber?: Prisma.StringFieldUpdateOperationsInput | string
-  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  users?: Prisma.UserUpdateManyWithoutHospitalNestedInput
   patients?: Prisma.PatientUpdateManyWithoutHospitalNestedInput
 }
 
 export type HospitalUncheckedUpdateWithoutAppointmentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  hospitalName?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  password?: Prisma.StringFieldUpdateOperationsInput | string
-  address?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
-  registrationNumber?: Prisma.StringFieldUpdateOperationsInput | string
-  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  users?: Prisma.UserUncheckedUpdateManyWithoutHospitalNestedInput
   patients?: Prisma.PatientUncheckedUpdateManyWithoutHospitalNestedInput
 }
 
@@ -624,11 +767,13 @@ export type HospitalUncheckedUpdateWithoutAppointmentsInput = {
  */
 
 export type HospitalCountOutputType = {
+  users: number
   patients: number
   appointments: number
 }
 
 export type HospitalCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  users?: boolean | HospitalCountOutputTypeCountUsersArgs
   patients?: boolean | HospitalCountOutputTypeCountPatientsArgs
   appointments?: boolean | HospitalCountOutputTypeCountAppointmentsArgs
 }
@@ -641,6 +786,13 @@ export type HospitalCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Ext
    * Select specific fields to fetch from the HospitalCountOutputType
    */
   select?: Prisma.HospitalCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * HospitalCountOutputType without action
+ */
+export type HospitalCountOutputTypeCountUsersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.UserWhereInput
 }
 
 /**
@@ -660,15 +812,17 @@ export type HospitalCountOutputTypeCountAppointmentsArgs<ExtArgs extends runtime
 
 export type HospitalSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  hospitalName?: boolean
+  name?: boolean
   email?: boolean
-  password?: boolean
-  address?: boolean
   phone?: boolean
+  address?: boolean
+  logoUrl?: boolean
   registrationNumber?: boolean
-  isVerified?: boolean
+  isActive?: boolean
+  registeredAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  users?: boolean | Prisma.Hospital$usersArgs<ExtArgs>
   patients?: boolean | Prisma.Hospital$patientsArgs<ExtArgs>
   appointments?: boolean | Prisma.Hospital$appointmentsArgs<ExtArgs>
   _count?: boolean | Prisma.HospitalCountOutputTypeDefaultArgs<ExtArgs>
@@ -676,45 +830,49 @@ export type HospitalSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
 
 export type HospitalSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  hospitalName?: boolean
+  name?: boolean
   email?: boolean
-  password?: boolean
-  address?: boolean
   phone?: boolean
+  address?: boolean
+  logoUrl?: boolean
   registrationNumber?: boolean
-  isVerified?: boolean
+  isActive?: boolean
+  registeredAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["hospital"]>
 
 export type HospitalSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  hospitalName?: boolean
+  name?: boolean
   email?: boolean
-  password?: boolean
-  address?: boolean
   phone?: boolean
+  address?: boolean
+  logoUrl?: boolean
   registrationNumber?: boolean
-  isVerified?: boolean
+  isActive?: boolean
+  registeredAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["hospital"]>
 
 export type HospitalSelectScalar = {
   id?: boolean
-  hospitalName?: boolean
+  name?: boolean
   email?: boolean
-  password?: boolean
-  address?: boolean
   phone?: boolean
+  address?: boolean
+  logoUrl?: boolean
   registrationNumber?: boolean
-  isVerified?: boolean
+  isActive?: boolean
+  registeredAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type HospitalOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "hospitalName" | "email" | "password" | "address" | "phone" | "registrationNumber" | "isVerified" | "createdAt" | "updatedAt", ExtArgs["result"]["hospital"]>
+export type HospitalOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "phone" | "address" | "logoUrl" | "registrationNumber" | "isActive" | "registeredAt" | "createdAt" | "updatedAt", ExtArgs["result"]["hospital"]>
 export type HospitalInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  users?: boolean | Prisma.Hospital$usersArgs<ExtArgs>
   patients?: boolean | Prisma.Hospital$patientsArgs<ExtArgs>
   appointments?: boolean | Prisma.Hospital$appointmentsArgs<ExtArgs>
   _count?: boolean | Prisma.HospitalCountOutputTypeDefaultArgs<ExtArgs>
@@ -725,18 +883,20 @@ export type HospitalIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
 export type $HospitalPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Hospital"
   objects: {
+    users: Prisma.$UserPayload<ExtArgs>[]
     patients: Prisma.$PatientPayload<ExtArgs>[]
     appointments: Prisma.$AppointmentPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    hospitalName: string
+    name: string
     email: string
-    password: string
-    address: string
     phone: string
-    registrationNumber: string
-    isVerified: boolean
+    address: string | null
+    logoUrl: string | null
+    registrationNumber: string | null
+    isActive: boolean
+    registeredAt: Date
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["hospital"]>
@@ -1133,6 +1293,7 @@ readonly fields: HospitalFieldRefs;
  */
 export interface Prisma__HospitalClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  users<T extends Prisma.Hospital$usersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Hospital$usersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   patients<T extends Prisma.Hospital$patientsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Hospital$patientsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PatientPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   appointments<T extends Prisma.Hospital$appointmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Hospital$appointmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AppointmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
@@ -1165,13 +1326,14 @@ export interface Prisma__HospitalClient<T, Null = never, ExtArgs extends runtime
  */
 export interface HospitalFieldRefs {
   readonly id: Prisma.FieldRef<"Hospital", 'String'>
-  readonly hospitalName: Prisma.FieldRef<"Hospital", 'String'>
+  readonly name: Prisma.FieldRef<"Hospital", 'String'>
   readonly email: Prisma.FieldRef<"Hospital", 'String'>
-  readonly password: Prisma.FieldRef<"Hospital", 'String'>
-  readonly address: Prisma.FieldRef<"Hospital", 'String'>
   readonly phone: Prisma.FieldRef<"Hospital", 'String'>
+  readonly address: Prisma.FieldRef<"Hospital", 'String'>
+  readonly logoUrl: Prisma.FieldRef<"Hospital", 'String'>
   readonly registrationNumber: Prisma.FieldRef<"Hospital", 'String'>
-  readonly isVerified: Prisma.FieldRef<"Hospital", 'Boolean'>
+  readonly isActive: Prisma.FieldRef<"Hospital", 'Boolean'>
+  readonly registeredAt: Prisma.FieldRef<"Hospital", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Hospital", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Hospital", 'DateTime'>
 }
@@ -1559,6 +1721,30 @@ export type HospitalDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * Limit how many Hospitals to delete.
    */
   limit?: number
+}
+
+/**
+ * Hospital.users
+ */
+export type Hospital$usersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the User
+   */
+  select?: Prisma.UserSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the User
+   */
+  omit?: Prisma.UserOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null
+  where?: Prisma.UserWhereInput
+  orderBy?: Prisma.UserOrderByWithRelationInput | Prisma.UserOrderByWithRelationInput[]
+  cursor?: Prisma.UserWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.UserScalarFieldEnum | Prisma.UserScalarFieldEnum[]
 }
 
 /**

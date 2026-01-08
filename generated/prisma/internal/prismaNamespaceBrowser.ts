@@ -52,9 +52,15 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   Hospital: 'Hospital',
+  User: 'User',
   Patient: 'Patient',
   Appointment: 'Appointment',
-  MedicalRecord: 'MedicalRecord'
+  VitalsRecord: 'VitalsRecord',
+  VoiceTranscript: 'VoiceTranscript',
+  ConsultationNote: 'ConsultationNote',
+  Prescription: 'Prescription',
+  PrescriptionItem: 'PrescriptionItem',
+  Referral: 'Referral'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -75,13 +81,14 @@ export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof
 
 export const HospitalScalarFieldEnum = {
   id: 'id',
-  hospitalName: 'hospitalName',
+  name: 'name',
   email: 'email',
-  password: 'password',
-  address: 'address',
   phone: 'phone',
+  address: 'address',
+  logoUrl: 'logoUrl',
   registrationNumber: 'registrationNumber',
-  isVerified: 'isVerified',
+  isActive: 'isActive',
+  registeredAt: 'registeredAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -89,22 +96,50 @@ export const HospitalScalarFieldEnum = {
 export type HospitalScalarFieldEnum = (typeof HospitalScalarFieldEnum)[keyof typeof HospitalScalarFieldEnum]
 
 
+export const UserScalarFieldEnum = {
+  id: 'id',
+  hospitalId: 'hospitalId',
+  firstName: 'firstName',
+  lastName: 'lastName',
+  email: 'email',
+  phone: 'phone',
+  role: 'role',
+  passwordHash: 'passwordHash',
+  specialization: 'specialization',
+  licenseNumber: 'licenseNumber',
+  isAvailable: 'isAvailable',
+  currentAppointmentId: 'currentAppointmentId',
+  isActive: 'isActive',
+  lastLogin: 'lastLogin',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
 export const PatientScalarFieldEnum = {
   id: 'id',
+  hospitalId: 'hospitalId',
+  patientIdNumber: 'patientIdNumber',
   firstName: 'firstName',
   lastName: 'lastName',
   dateOfBirth: 'dateOfBirth',
   gender: 'gender',
+  bloodType: 'bloodType',
+  genotype: 'genotype',
+  phoneNumber: 'phoneNumber',
   email: 'email',
-  phone: 'phone',
   address: 'address',
-  bloodGroup: 'bloodGroup',
-  allergies: 'allergies',
-  medicalHistory: 'medicalHistory',
-  emergencyContact: 'emergencyContact',
-  emergencyPhone: 'emergencyPhone',
-  hospitalId: 'hospitalId',
-  createdAt: 'createdAt',
+  emergencyContactName: 'emergencyContactName',
+  emergencyContactPhone: 'emergencyContactPhone',
+  emergencyContactRelationship: 'emergencyContactRelationship',
+  knownAllergies: 'knownAllergies',
+  chronicConditions: 'chronicConditions',
+  currentMedications: 'currentMedications',
+  status: 'status',
+  registeredBy: 'registeredBy',
+  registeredAt: 'registeredAt',
   updatedAt: 'updatedAt'
 } as const
 
@@ -113,32 +148,137 @@ export type PatientScalarFieldEnum = (typeof PatientScalarFieldEnum)[keyof typeo
 
 export const AppointmentScalarFieldEnum = {
   id: 'id',
-  patientId: 'patientId',
+  appointmentNumber: 'appointmentNumber',
   hospitalId: 'hospitalId',
-  appointmentDate: 'appointmentDate',
-  reason: 'reason',
+  patientId: 'patientId',
+  createdBy: 'createdBy',
+  assignedDoctorId: 'assignedDoctorId',
+  assignedPharmacistId: 'assignedPharmacistId',
+  referredToDoctorId: 'referredToDoctorId',
+  chiefComplaint: 'chiefComplaint',
   status: 'status',
-  notes: 'notes',
+  priority: 'priority',
   createdAt: 'createdAt',
+  doctorAssignedAt: 'doctorAssignedAt',
+  consultationStartedAt: 'consultationStartedAt',
+  consultationCompletedAt: 'consultationCompletedAt',
+  completedAt: 'completedAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type AppointmentScalarFieldEnum = (typeof AppointmentScalarFieldEnum)[keyof typeof AppointmentScalarFieldEnum]
 
 
-export const MedicalRecordScalarFieldEnum = {
+export const VitalsRecordScalarFieldEnum = {
   id: 'id',
-  patientId: 'patientId',
-  visitDate: 'visitDate',
-  diagnosis: 'diagnosis',
-  prescription: 'prescription',
-  notes: 'notes',
-  doctorName: 'doctorName',
+  appointmentId: 'appointmentId',
+  bloodPressureSystolic: 'bloodPressureSystolic',
+  bloodPressureDiastolic: 'bloodPressureDiastolic',
+  pulseRate: 'pulseRate',
+  temperature: 'temperature',
+  respiratoryRate: 'respiratoryRate',
+  oxygenSaturation: 'oxygenSaturation',
+  weight: 'weight',
+  height: 'height',
+  painLevel: 'painLevel',
+  painLocation: 'painLocation',
+  symptomsDescription: 'symptomsDescription',
+  symptomDuration: 'symptomDuration',
+  hasVoiceRecording: 'hasVoiceRecording',
+  voiceTranscriptId: 'voiceTranscriptId',
+  recordedVia: 'recordedVia',
+  recordedBy: 'recordedBy',
+  recordedAt: 'recordedAt'
+} as const
+
+export type VitalsRecordScalarFieldEnum = (typeof VitalsRecordScalarFieldEnum)[keyof typeof VitalsRecordScalarFieldEnum]
+
+
+export const VoiceTranscriptScalarFieldEnum = {
+  id: 'id',
+  appointmentId: 'appointmentId',
+  audioFileUrl: 'audioFileUrl',
+  audioDurationSeconds: 'audioDurationSeconds',
+  rawTranscript: 'rawTranscript',
+  extractedVitals: 'extractedVitals',
+  extractionConfidence: 'extractionConfidence',
+  transcriptionStatus: 'transcriptionStatus',
+  processedAt: 'processedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type VoiceTranscriptScalarFieldEnum = (typeof VoiceTranscriptScalarFieldEnum)[keyof typeof VoiceTranscriptScalarFieldEnum]
+
+
+export const ConsultationNoteScalarFieldEnum = {
+  id: 'id',
+  appointmentId: 'appointmentId',
+  historyOfPresentIllness: 'historyOfPresentIllness',
+  physicalExamination: 'physicalExamination',
+  assessment: 'assessment',
+  plan: 'plan',
+  diagnosisCodes: 'diagnosisCodes',
+  additionalNotes: 'additionalNotes',
+  hasVoiceRecording: 'hasVoiceRecording',
+  voiceTranscriptId: 'voiceTranscriptId',
+  createdBy: 'createdBy',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
-export type MedicalRecordScalarFieldEnum = (typeof MedicalRecordScalarFieldEnum)[keyof typeof MedicalRecordScalarFieldEnum]
+export type ConsultationNoteScalarFieldEnum = (typeof ConsultationNoteScalarFieldEnum)[keyof typeof ConsultationNoteScalarFieldEnum]
+
+
+export const PrescriptionScalarFieldEnum = {
+  id: 'id',
+  prescriptionNumber: 'prescriptionNumber',
+  appointmentId: 'appointmentId',
+  patientId: 'patientId',
+  prescribedBy: 'prescribedBy',
+  assignedPharmacistId: 'assignedPharmacistId',
+  status: 'status',
+  pharmacistNotes: 'pharmacistNotes',
+  prescribedAt: 'prescribedAt',
+  sentToPharmacyAt: 'sentToPharmacyAt',
+  dispensedAt: 'dispensedAt',
+  dispensedBy: 'dispensedBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PrescriptionScalarFieldEnum = (typeof PrescriptionScalarFieldEnum)[keyof typeof PrescriptionScalarFieldEnum]
+
+
+export const PrescriptionItemScalarFieldEnum = {
+  id: 'id',
+  prescriptionId: 'prescriptionId',
+  medicationName: 'medicationName',
+  dosage: 'dosage',
+  frequency: 'frequency',
+  duration: 'duration',
+  quantity: 'quantity',
+  instructions: 'instructions',
+  isDispensed: 'isDispensed',
+  createdAt: 'createdAt'
+} as const
+
+export type PrescriptionItemScalarFieldEnum = (typeof PrescriptionItemScalarFieldEnum)[keyof typeof PrescriptionItemScalarFieldEnum]
+
+
+export const ReferralScalarFieldEnum = {
+  id: 'id',
+  appointmentId: 'appointmentId',
+  referredBy: 'referredBy',
+  referredTo: 'referredTo',
+  reason: 'reason',
+  urgency: 'urgency',
+  newAppointmentId: 'newAppointmentId',
+  status: 'status',
+  createdAt: 'createdAt',
+  respondedAt: 'respondedAt'
+} as const
+
+export type ReferralScalarFieldEnum = (typeof ReferralScalarFieldEnum)[keyof typeof ReferralScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -147,6 +287,14 @@ export const SortOrder = {
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const NullableJsonNullValueInput = {
+  DbNull: 'DbNull',
+  JsonNull: 'JsonNull'
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
 export const QueryMode = {
@@ -163,4 +311,13 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: 'DbNull',
+  JsonNull: 'JsonNull',
+  AnyNull: 'AnyNull'
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 

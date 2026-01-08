@@ -45,6 +45,11 @@ export { Prisma }
  */
 export type Hospital = Prisma.HospitalModel
 /**
+ * Model User
+ * 
+ */
+export type User = Prisma.UserModel
+/**
  * Model Patient
  * 
  */
@@ -55,7 +60,32 @@ export type Patient = Prisma.PatientModel
  */
 export type Appointment = Prisma.AppointmentModel
 /**
- * Model MedicalRecord
+ * Model VitalsRecord
  * 
  */
-export type MedicalRecord = Prisma.MedicalRecordModel
+export type VitalsRecord = Prisma.VitalsRecordModel
+/**
+ * Model VoiceTranscript
+ * 
+ */
+export type VoiceTranscript = Prisma.VoiceTranscriptModel
+/**
+ * Model ConsultationNote
+ * 
+ */
+export type ConsultationNote = Prisma.ConsultationNoteModel
+/**
+ * Model Prescription
+ * 
+ */
+export type Prescription = Prisma.PrescriptionModel
+/**
+ * Model PrescriptionItem
+ * 
+ */
+export type PrescriptionItem = Prisma.PrescriptionItemModel
+/**
+ * Model Referral
+ * 
+ */
+export type Referral = Prisma.ReferralModel
