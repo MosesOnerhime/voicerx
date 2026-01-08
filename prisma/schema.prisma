@@ -1,0 +1,425 @@
+generator client {
+  provider        = "prisma-client" // or `prisma-client-js`
+  output          = "../generated/prisma"
+  engineType      = "client" // enable Prisma ORM without Rust
+}
+
+datasource db {
+  provider = "postgresql"
+  // url      = env("DATABASE_URL")
+}
+
+// ============================================================
+// SECTION 4.2.1: HOSPITAL
+// PRD: Stores hospital registration and business information
+// ============================================================
+model Hospital {
+  id                 String   @id @default(cuid())
+  name               String
+  email              String   @unique
+  phone              String
+  address            String?
+  logoUrl            String?  @map("logo_url")
+  registrationNumber String?  @map("registration_number")
+  isActive           Boolean  @default(true) @map("is_active")
+  registeredAt       DateTime @default(now()) @map("registered_at")
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  users        User[]
+  patients     Patient[]
+  appointments Appointment[]
+
+  @@map("hospitals")
+}
+
+// ============================================================
+// SECTION 4.2.2: USER (STAFF)
+// PRD: Doctors, nurses, pharmacists, receptionists, admins
+// PRD Section 3.1: Role Hierarchy
+// ============================================================
+model User {
+  id                   String    @id @default(cuid())
+  hospitalId           String    @map("hospital_id")
+  firstName            String    @map("first_name")
+  lastName             String    @map("last_name")
+  email                String    @unique
+  phone                String
+  role                 UserRole
+  passwordHash         String    @map("password_hash")
+  specialization       String?
+  licenseNumber        String?   @map("license_number")
+  isAvailable          Boolean   @default(true) @map("is_available")
+  currentAppointmentId String?   @map("current_appointment_id")
+  isActive             Boolean   @default(true) @map("is_active")
+  lastLogin            DateTime? @map("last_login")
+  createdAt            DateTime  @default(now()) @map("created_at")
+  updatedAt            DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  hospital                       Hospital           @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
+  patientsRegistered             Patient[]          @relation("RegisteredBy")
+  appointmentsCreated            Appointment[]      @relation("CreatedBy")
+  appointmentsAssignedDoctor     Appointment[]      @relation("AssignedDoctor")
+  appointmentsAssignedPharmacist Appointment[]      @relation("AssignedPharmacist")
+  vitalsRecorded                 VitalsRecord[]     @relation("RecordedBy")
+  consultationNotes              ConsultationNote[] @relation("CreatedBy")
+  prescriptionsCreated           Prescription[]     @relation("PrescribedBy")
+  prescriptionsDispensed         Prescription[]     @relation("DispensedBy")
+  referralsFrom                  Referral[]         @relation("ReferredBy")
+  referralsTo                    Referral[]         @relation("ReferredTo")
+
+  @@map("users")
+  @@index([hospitalId])
+  @@index([role])
+  @@index([isAvailable])
+}
+
+// PRD Section 3.1: User roles
+enum UserRole {
+  ADMIN
+  DOCTOR
+  NURSE
+  RECEPTIONIST
+  PHARMACIST
+}
+
+// ============================================================
+// SECTION 4.2.3: PATIENT
+// PRD: Patient demographics and medical background
+// Persists across appointments
+// ============================================================
+model Patient {
+  id                           String        @id @default(cuid())
+  hospitalId                   String        @map("hospital_id")
+  patientIdNumber              String        @unique @map("patient_id_number")
+  firstName                    String        @map("first_name")
+  lastName                     String        @map("last_name")
+  dateOfBirth                  DateTime      @map("date_of_birth")
+  gender                       Gender
+  bloodType                    BloodType?    @map("blood_type")
+  genotype                     Genotype?
+  phoneNumber                  String        @map("phone_number")
+  email                        String?
+  address                      String?
+  emergencyContactName         String        @map("emergency_contact_name")
+  emergencyContactPhone        String        @map("emergency_contact_phone")
+  emergencyContactRelationship String        @map("emergency_contact_relationship")
+  knownAllergies               Json?         @map("known_allergies")
+  chronicConditions            Json?         @map("chronic_conditions")
+  currentMedications           Json?         @map("current_medications")
+  status                       PatientStatus @default(ACTIVE)
+  registeredBy                 String        @map("registered_by")
+  registeredAt                 DateTime      @default(now()) @map("registered_at")
+  updatedAt                    DateTime      @updatedAt @map("updated_at")
+
+  // Relations
+  hospital         Hospital       @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
+  registeredByUser User           @relation("RegisteredBy", fields: [registeredBy], references: [id])
+  appointments     Appointment[]
+  prescriptions    Prescription[]
+
+  @@map("patients")
+  @@index([hospitalId])
+  @@index([patientIdNumber])
+  @@index([phoneNumber])
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum BloodType {
+  A_POSITIVE  @map("A+")
+  A_NEGATIVE  @map("A-")
+  B_POSITIVE  @map("B+")
+  B_NEGATIVE  @map("B-")
+  AB_POSITIVE @map("AB+")
+  AB_NEGATIVE @map("AB-")
+  O_POSITIVE  @map("O+")
+  O_NEGATIVE  @map("O-")
+}
+
+enum Genotype {
+  AA
+  AS
+  SS
+  AC
+  SC
+}
+
+enum PatientStatus {
+  ACTIVE
+  INACTIVE
+}
+
+// ============================================================
+// SECTION 4.2.4: APPOINTMENT (CENTRAL PIPELINE ENTITY)
+// PRD Section 2: Streamlined Workflow
+// This is the HEART of the system - tracks entire patient journey
+// One Appointment = One Continuous Pipeline
+// ============================================================
+model Appointment {
+  id                      String            @id @default(cuid())
+  appointmentNumber       String            @unique @map("appointment_number")
+  hospitalId              String            @map("hospital_id")
+  patientId               String            @map("patient_id")
+  createdBy               String            @map("created_by")
+  assignedDoctorId        String?           @map("assigned_doctor_id")
+  assignedPharmacistId    String?           @map("assigned_pharmacist_id")
+  referredToDoctorId      String?           @map("referred_to_doctor_id")
+  chiefComplaint          String            @map("chief_complaint")
+  status                  AppointmentStatus @default(CREATED)
+  priority                Priority          @default(NORMAL)
+  createdAt               DateTime          @default(now()) @map("created_at")
+  doctorAssignedAt        DateTime?         @map("doctor_assigned_at")
+  consultationStartedAt   DateTime?         @map("consultation_started_at")
+  consultationCompletedAt DateTime?         @map("consultation_completed_at")
+  completedAt             DateTime?         @map("completed_at")
+  updatedAt               DateTime          @updatedAt @map("updated_at")
+
+  // Relations
+  hospital           Hospital          @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
+  patient            Patient           @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  createdByUser      User              @relation("CreatedBy", fields: [createdBy], references: [id])
+  assignedDoctor     User?             @relation("AssignedDoctor", fields: [assignedDoctorId], references: [id])
+  assignedPharmacist User?             @relation("AssignedPharmacist", fields: [assignedPharmacistId], references: [id])
+  vitalsRecord       VitalsRecord?
+  voiceTranscript    VoiceTranscript?
+  consultationNote   ConsultationNote?
+  prescription       Prescription?
+  referral           Referral?
+
+  @@map("appointments")
+  @@index([hospitalId])
+  @@index([patientId])
+  @@index([assignedDoctorId])
+  @@index([status])
+  @@index([priority])
+  @@index([createdAt])
+}
+
+// PRD Section 4.2.4: Pipeline status flow
+// Nurse → Doctor → Pharmacist/Referral
+enum AppointmentStatus {
+  CREATED              // Step 1: Nurse creates appointment
+  VITALS_RECORDED      // Step 2: Vitals captured (voice or manual)
+  ASSIGNED             // Step 3: Assigned to doctor
+  IN_QUEUE             // Step 4: Waiting for doctor
+  IN_CONSULTATION      // Step 5: Doctor seeing patient
+  PENDING_PHARMACY     // Step 6: Prescription sent to pharmacy
+  PENDING_REFERRAL     // Step 7: Referred to specialist
+  COMPLETED            // Step 8: Fully completed
+  CANCELLED            // Cancelled appointment
+}
+
+enum Priority {
+  NORMAL
+  URGENT
+  EMERGENCY
+}
+
+// ============================================================
+// SECTION 4.2.5: VITALS RECORD
+// PRD Section 5.4: Vitals Collection Module
+// Supports manual entry and voice recording
+// ============================================================
+model VitalsRecord {
+  id                     String          @id @default(cuid())
+  appointmentId          String          @unique @map("appointment_id")
+  bloodPressureSystolic  Int?            @map("blood_pressure_systolic")
+  bloodPressureDiastolic Int?            @map("blood_pressure_diastolic")
+  pulseRate              Int?            @map("pulse_rate")
+  temperature            Float?
+  respiratoryRate        Int?            @map("respiratory_rate")
+  oxygenSaturation       Int?            @map("oxygen_saturation")
+  weight                 Float?
+  height                 Float?
+  painLevel              Int?            @map("pain_level")
+  painLocation           String?         @map("pain_location")
+  symptomsDescription    String?         @map("symptoms_description")
+  symptomDuration        String?         @map("symptom_duration")
+  hasVoiceRecording      Boolean         @default(false) @map("has_voice_recording")
+  voiceTranscriptId      String?         @map("voice_transcript_id")
+  recordedVia            RecordingMethod @default(MANUAL) @map("recorded_via")
+  recordedBy             String          @map("recorded_by")
+  recordedAt             DateTime        @default(now()) @map("recorded_at")
+
+  // Relations
+  appointment    Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  recordedByUser User        @relation("RecordedBy", fields: [recordedBy], references: [id])
+
+  @@map("vitals_records")
+  @@index([appointmentId])
+}
+
+enum RecordingMethod {
+  MANUAL // Nurse types in manually
+  VOICE  // Voice recorded and AI transcribed
+  HYBRID // Combination of both
+}
+
+// ============================================================
+// SECTION 4.2.6: VOICE TRANSCRIPT
+// PRD Section 5.4.1: Voice-Enabled Vitals Capture
+// Stores audio transcription and AI-extracted data
+// ============================================================
+model VoiceTranscript {
+  id                   String              @id @default(cuid())
+  appointmentId        String              @unique @map("appointment_id")
+  audioFileUrl         String              @map("audio_file_url")
+  audioDurationSeconds Int                 @map("audio_duration_seconds")
+  rawTranscript        String              @map("raw_transcript") @db.Text
+  extractedVitals      Json?               @map("extracted_vitals")
+  extractionConfidence Float?              @map("extraction_confidence")
+  transcriptionStatus  TranscriptionStatus @default(PENDING) @map("transcription_status")
+  processedAt          DateTime?           @map("processed_at")
+  createdAt            DateTime            @default(now()) @map("created_at")
+
+  // Relations
+  appointment Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+
+  @@map("voice_transcripts")
+  @@index([appointmentId])
+  @@index([transcriptionStatus])
+}
+
+enum TranscriptionStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+// ============================================================
+// SECTION 4.2.7: CONSULTATION NOTES
+// PRD Section 5.6.2: Consultation View
+// Doctor's clinical documentation
+// ============================================================
+model ConsultationNote {
+  id                      String   @id @default(cuid())
+  appointmentId           String   @unique @map("appointment_id")
+  historyOfPresentIllness String?  @map("history_of_present_illness") @db.Text
+  physicalExamination     String?  @map("physical_examination") @db.Text
+  assessment              String?  @db.Text
+  plan                    String?  @db.Text
+  diagnosisCodes          Json?    @map("diagnosis_codes")
+  additionalNotes         String?  @map("additional_notes") @db.Text
+  hasVoiceRecording       Boolean  @default(false) @map("has_voice_recording")
+  voiceTranscriptId       String?  @map("voice_transcript_id")
+  createdBy               String   @map("created_by")
+  createdAt               DateTime @default(now()) @map("created_at")
+  updatedAt               DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  appointment   Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  createdByUser User        @relation("CreatedBy", fields: [createdBy], references: [id])
+
+  @@map("consultation_notes")
+  @@index([appointmentId])
+}
+
+// ============================================================
+// SECTION 4.2.8: PRESCRIPTION
+// PRD Section 5.8: Prescription Module
+// Flows from doctor to pharmacy
+// ============================================================
+model Prescription {
+  id                   String             @id @default(cuid())
+  prescriptionNumber   String             @unique @map("prescription_number")
+  appointmentId        String             @unique @map("appointment_id")
+  patientId            String             @map("patient_id")
+  prescribedBy         String             @map("prescribed_by")
+  assignedPharmacistId String?            @map("assigned_pharmacist_id")
+  status               PrescriptionStatus @default(CREATED)
+  pharmacistNotes      String?            @map("pharmacist_notes") @db.Text
+  prescribedAt         DateTime           @default(now()) @map("prescribed_at")
+  sentToPharmacyAt     DateTime?          @map("sent_to_pharmacy_at")
+  dispensedAt          DateTime?          @map("dispensed_at")
+  dispensedBy          String?            @map("dispensed_by")
+  createdAt            DateTime           @default(now()) @map("created_at")
+  updatedAt            DateTime           @updatedAt @map("updated_at")
+
+  // Relations
+  appointment      Appointment        @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  patient          Patient            @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  prescribedByUser User               @relation("PrescribedBy", fields: [prescribedBy], references: [id])
+  dispensedByUser  User?              @relation("DispensedBy", fields: [dispensedBy], references: [id])
+  items            PrescriptionItem[]
+
+  @@map("prescriptions")
+  @@index([appointmentId])
+  @@index([patientId])
+  @@index([status])
+}
+
+enum PrescriptionStatus {
+  CREATED
+  SENT_TO_PHARMACY
+  DISPENSING
+  DISPENSED
+  CANCELLED
+}
+
+model PrescriptionItem {
+  id             String   @id @default(cuid())
+  prescriptionId String   @map("prescription_id")
+  medicationName String   @map("medication_name")
+  dosage         String
+  frequency      String
+  duration       String
+  quantity       Int
+  instructions   String?  @db.Text
+  isDispensed    Boolean  @default(false) @map("is_dispensed")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  // Relations
+  prescription Prescription @relation(fields: [prescriptionId], references: [id], onDelete: Cascade)
+
+  @@map("prescription_items")
+  @@index([prescriptionId])
+}
+
+// ============================================================
+// SECTION 4.2.9: REFERRAL
+// PRD Section 5.10: Referral Module
+// When patient needs specialist
+// ============================================================
+model Referral {
+  id               String          @id @default(cuid())
+  appointmentId    String          @unique @map("appointment_id")
+  referredBy       String          @map("referred_by")
+  referredTo       String          @map("referred_to")
+  reason           String          @db.Text
+  urgency          ReferralUrgency
+  newAppointmentId String?         @map("new_appointment_id")
+  status           ReferralStatus  @default(PENDING)
+  createdAt        DateTime        @default(now()) @map("created_at")
+  respondedAt      DateTime?       @map("responded_at")
+
+  // Relations
+  appointment    Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  referredByUser User        @relation("ReferredBy", fields: [referredBy], references: [id])
+  referredToUser User        @relation("ReferredTo", fields: [referredTo], references: [id])
+
+  @@map("referrals")
+  @@index([appointmentId])
+  @@index([referredTo])
+  @@index([status])
+}
+
+enum ReferralUrgency {
+  ROUTINE
+  URGENT
+  EMERGENCY
+}
+
+enum ReferralStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  COMPLETED
+}
