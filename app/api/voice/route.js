@@ -10,9 +10,16 @@ import { prisma } from '@/lib/prisma';
 import { verifyToken } from '@/lib/auth';
 import OpenAI from 'openai';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// Lazy-load OpenAI client to avoid build-time errors
+let openai = null;
+function getOpenAI() {
+  if (!openai) {
+    openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+  }
+  return openai;
+}
 
 // AI extraction prompt for vitals
 const EXTRACTION_PROMPT = `You are a medical assistant. Extract vitals and symptoms from this nurse-patient conversation transcript.
@@ -120,7 +127,7 @@ export async function POST(request) {
 
     try {
       // 6. TRANSCRIBE WITH WHISPER API
-      const transcription = await openai.audio.transcriptions.create({
+      const transcription = await getOpenAI().audio.transcriptions.create({
         file: audioFile,
         model: 'whisper-1',
         language: 'en',
@@ -133,7 +140,7 @@ export async function POST(request) {
       // 7. EXTRACT VITALS WITH GPT-4
       const extractionPrompt = EXTRACTION_PROMPT.replace('{transcript}', rawTranscript);
 
-      const extraction = await openai.chat.completions.create({
+      const extraction = await getOpenAI().chat.completions.create({
         model: 'gpt-4o',
         messages: [
           {
