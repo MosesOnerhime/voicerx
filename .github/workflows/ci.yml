@@ -9,8 +9,26 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    # PostgreSQL service for integration tests
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: testuser
+          POSTGRES_PASSWORD: testpass
+          POSTGRES_DB: testdb
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     env:
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      DATABASE_URL: postgresql://testuser:testpass@localhost:5432/testdb
+      JWT_SECRET: test-jwt-secret-for-ci-testing
 
     steps:
       - name: Checkout repository
@@ -27,13 +45,15 @@ jobs:
 
       - name: Generate Prisma Client
         run: npx prisma generate
-        env:
-          DATABASE_URL: "postgresql://user:pass@localhost:5432/db"
+
+      - name: Run database migrations
+        run: npx prisma migrate deploy
 
       - name: Run ESLint
         run: npm run lint
 
+      - name: Run tests
+        run: npm run test:ci
+
       - name: Build Next.js app
         run: npm run build
-        env:
-          DATABASE_URL: "postgresql://user:pass@localhost:5432/db"
