@@ -26,10 +26,14 @@ jobs:
         run: npm ci
 
       - name: Generate Prisma Client
-        run: npx prisma generate --allow-no-models
+        run: npx prisma generate
+        env:
+          DATABASE_URL: "postgresql://user:pass@localhost:5432/db"
 
       - name: Run ESLint
         run: npm run lint
 
       - name: Build Next.js app
         run: npm run build
+        env:
+          DATABASE_URL: "postgresql://user:pass@localhost:5432/db"
