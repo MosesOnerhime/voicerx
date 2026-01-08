@@ -27,6 +27,7 @@
 
 import { prisma } from '@/lib/prisma';
 import { verifyToken } from '@/lib/auth';
+import { notifyPrescriptionReady } from '@/lib/notifications';
 
 // Helper function to generate unique prescription number
 function generatePrescriptionNumber() {
@@ -197,6 +198,9 @@ export async function POST(request) {
 
       return prescription;
     });
+
+    // Notify pharmacists of new prescription
+    notifyPrescriptionReady(decoded.hospitalId, result);
 
     return Response.json(
       {

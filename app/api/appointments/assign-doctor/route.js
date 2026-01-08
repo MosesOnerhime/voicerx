@@ -18,6 +18,7 @@
 
 import { prisma } from '@/lib/prisma';
 import { verifyToken } from '@/lib/auth';
+import { notifyNewAppointment } from '@/lib/notifications';
 
 // POST - Assign appointment to doctor
 export async function POST(request) {
@@ -128,6 +129,9 @@ export async function POST(request) {
         vitalsRecord: true,
       },
     });
+
+    // Notify the doctor of the new appointment
+    notifyNewAppointment(decoded.hospitalId, body.doctorId, updatedAppointment);
 
     return Response.json({
       message: 'Appointment assigned to doctor successfully',

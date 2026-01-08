@@ -10,6 +10,7 @@
 
 import { prisma } from '@/lib/prisma';
 import { verifyToken } from '@/lib/auth';
+import { notifyReferralReceived } from '@/lib/notifications';
 
 // POST - Create a referral to a specialist
 export async function POST(request) {
@@ -165,6 +166,12 @@ export async function POST(request) {
       });
 
       return referral;
+    });
+
+    // Notify the specialist of the new referral
+    notifyReferralReceived(decoded.hospitalId, referredToId, {
+      ...result,
+      appointment: { patient: appointment.patient },
     });
 
     return Response.json(

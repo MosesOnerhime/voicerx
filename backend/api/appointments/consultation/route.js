@@ -32,6 +32,7 @@
 
 import { prisma } from '@/lib/prisma';
 import { verifyToken } from '@/lib/auth';
+import { notifyDoctorAvailable, notifyDoctorBusy } from '@/lib/notifications';
 
 // POST - Start or complete consultation
 export async function POST(request) {
@@ -128,6 +129,13 @@ export async function POST(request) {
         return updatedAppointment;
       });
 
+      // Notify nurses that doctor is now busy
+      notifyDoctorBusy(decoded.hospitalId, {
+        id: decoded.userId,
+        firstName: decoded.firstName,
+        lastName: decoded.lastName,
+      });
+
       return Response.json({
         message: 'Consultation started',
         appointment: result,
@@ -175,13 +183,20 @@ export async function POST(request) {
         return { updatedAppointment, prescription };
       });
 
+      // Notify nurses that doctor is now available
+      notifyDoctorAvailable(decoded.hospitalId, {
+        id: decoded.userId,
+        firstName: decoded.firstName,
+        lastName: decoded.lastName,
+      });
+
       return Response.json({
         message: 'Consultation completed',
         appointment: result.updatedAppointment,
         doctorStatus: 'AVAILABLE',
         hasPrescription: !!result.prescription,
-        nextStep: result.prescription 
-          ? 'Prescription sent to pharmacy' 
+        nextStep: result.prescription
+          ? 'Prescription sent to pharmacy'
           : 'Appointment completed',
       });
     }
