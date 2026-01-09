@@ -6,7 +6,7 @@ import { toast } from "../hooks/use-toast";
 import axios from "axios";
 
 // Environment variable for API URL
-const API_URL = 'http://localhost:5001/api';
+const API_URL = 'http://localhost:5000/api';
 
 // Demo data arrays for generating random credentials
 const hospitalPrefixes = ["Lagos", "Abuja", "Ibadan", "Kano", "Port Harcourt", "Enugu", "Kaduna", "Benin", "Onitsha", "Owerri"];

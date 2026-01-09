@@ -41,3 +41,29 @@ export interface Appointment {
   assignedDoctorId?: string;
   chiefComplaint?: string;
 }
+
+export type Status = "pending" | "dispensed";
+
+export interface Medication {
+  id: number;
+  medication_name: string;
+  dosage: string;
+  quantity: string;
+  instructions?: string;
+}
+
+export interface Prescription {
+  id: number;
+  appointmentid: number;
+  patient_name: string;
+  patient_id: string;
+  prescribed_by: string;
+  assigned_pharmacist_id: string;
+  priority: Priority;
+  status: Status;
+  date_issued: string;
+  date_dispensed: string | null;
+  pharmacist_notes: string | null;
+  notes?: string;
+  medications?: Medication[];
+}

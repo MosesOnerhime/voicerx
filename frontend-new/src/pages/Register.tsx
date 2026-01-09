@@ -6,74 +6,87 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginFormValues } from "../services/schema";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "../store/authSlice";
-import { Sparkles } from "lucide-react";
+import { Sparkles, AlertCircle } from "lucide-react"; // Added AlertCircle icon
 
 // Demo credentials for quick testing
 const demoAccounts = [
   { email: "admin@testhospital.com", password: "TestPassword123", label: "Test Hospital Admin" },
 ];
 
-
 const Register = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [demoIndex, setDemoIndex] = useState(0);
 
-  const { register, handleSubmit: handleFormSubmit, setError, setValue, formState: { errors, isSubmitting } } = useForm<LoginFormValues>({
+  const {
+    register,
+    handleSubmit: handleFormSubmit,
+    setError,
+    setValue,
+    clearErrors,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
   });
 
-  // Fill form with demo credentials (cycles through available accounts)
+  // Fill form with demo credentials
   const fillDemoCredentials = () => {
     const demo = demoAccounts[demoIndex];
     setValue("email", demo.email);
     setValue("password", demo.password);
     setDemoIndex((prev) => (prev + 1) % demoAccounts.length);
+    clearErrors("root"); // Clear any previous errors on new input
   };
-
 
   const onSubmit = async (data: LoginFormValues) => {
-   try {
-    
-    console.log("Sign in attempt with valid data:", data);
-      // 1. Cross-check with backend/DB
+    try {
+      clearErrors("root");
+      console.log("Sign in attempt with:", data.email);
+      
       const result = await authApi.manualLogin(data);
       
-      // 2. Update Redux state with user and token
+      // If result is null or undefined, assume user not found (depending on your API structure)
+      if (!result || !result.user) {
+         throw new Error("User not found");
+      }
+
+      // Update Redux
       dispatch(setCredentials({ user: result.user, token: result.token }));
       
-      // 3. Redirect (e.g., navigate('/dashboard'))
-      const role = result.user.role.toLowerCase();
-      navigate(`/${role}/dashboard`);
-     
+      // Role Mapping
+      const rolePaths: Record<string, string> = {
+        admin: "/admin/dashboard",
+        nurse: "/nurse/dashboard",
+        doctor: "/doctor/dashboard",
+        patient: "/patient/dashboard",
+        receptionist: "/receptionist/dashboard"
+      };
+
+      const userRole = result.user.role?.toLowerCase();
+      const targetPath = rolePaths[userRole] || "/dashboard";
+
+      navigate(targetPath);
+
     } catch (error: any) {
+      console.error("Login Error:", error);
+      
+      let errorMessage = "Something went wrong. Please try again.";
+      
+      // check for 404 specifically or specific backend messages
+      if (error.response?.status === 404 || error.message === "User not found") {
+        errorMessage = "User not found. Please check your email.";
+      } else if (error.response?.status === 401) {
+        errorMessage = "Invalid password. Please try again.";
+      } else if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      }
+
       setError("root", { 
-        message: error.response?.data?.message || "Invalid email or password" 
+        type: "manual",
+        message: errorMessage 
       });
-    } 
-  }
-/*
-  const handleSuccess = async (response: any) => {
-    try {
-        const googleToken = response.credential;
-        // 1. Call your backend API
-      const userData = await authApi.googleLogin(googleToken);
-      
-      // 2. Expert Step: Save your backend's JWT to localStorage
-      localStorage.setItem('token', userData.accessToken);
-      
-      // 3. Redirect user to Dashboard/Home
-      console.log('Login Successful, user data:', userData);
-    } catch (err) {
-      alert('Authentication with backend failed.');
     }
-
-    }
-
-  const handleError = () => {
-    console.log("Login Failed");
   };
-  */
 
   return (
     <div className="flex min-h-screen font-subheading">
@@ -118,7 +131,6 @@ const Register = () => {
                   />
                 </svg>
               </div>
-              {/* Demo Login Button */}
               <button
                 type="button"
                 onClick={fillDemoCredentials}
@@ -136,7 +148,6 @@ const Register = () => {
             </p>
           </div>
 
-          {/* Sign In Form */}
           <form onSubmit={handleFormSubmit(onSubmit)} className="space-y-6">
             <div>
               <label
@@ -146,12 +157,17 @@ const Register = () => {
                 Email address
               </label>
               <input
-              {...register("email")}
-                required
+                id="email"
+                {...register("email")}
+                onChange={() => clearErrors("root")} // Clear error when user types
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
                 placeholder="you@example.com"
               />
-              {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
+              {errors.email && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.email.message}
+                </p>
+              )}
             </div>
 
             <div>
@@ -165,11 +181,15 @@ const Register = () => {
                 id="password"
                 type="password"
                 {...register("password")}
-                required
+                onChange={() => clearErrors("root")} // Clear error when user types
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
                 placeholder="••••••••"
               />
-              {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}   
+              {errors.password && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.password.message}
+                </p>
+              )}
             </div>
 
             <div className="flex items-center justify-between">
@@ -188,53 +208,38 @@ const Register = () => {
               </a>
             </div>
 
+            {/* ERROR NOTIFICATION AREA */}
+            {errors.root && (
+              <div className="flex items-center gap-3 p-4 bg-red-50 border border-red-200 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
+                <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
+                <p className="text-sm text-red-700 font-medium">
+                  {errors.root.message}
+                </p>
+              </div>
+            )}
+
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-gradient-to-r from-purple-600 to-violet-600 text-white py-3 px-4 rounded-lg font-medium hover:from-purple-700 hover:to-violet-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-all shadow-lg shadow-purple-500/30 font-heading"
+              className="w-full bg-gradient-to-r from-purple-600 to-violet-600 text-white py-3 px-4 rounded-lg font-medium hover:from-purple-700 hover:to-violet-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-all shadow-lg shadow-purple-500/30 font-heading disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? "Checking..." : "Sign in"}
+              {isSubmitting ? "Signing in..." : "Sign in"}
             </button>
           </form>
 
-          {/* Divider *
-          <div className="mt-6 mb-6 flex items-center">
-            <div className="flex-1 border-t border-gray-300"></div>
-            <span className="px-4 text-sm text-gray-500">or continue with</span>
-            <div className="flex-1 border-t border-gray-300"></div>
-          </div>
-
-{/** 
-          * Social Sign In *
-          <div className="flex justify-center w-full">
-                <GoogleLogin
-                onSuccess={handleSuccess}
-                onError={handleError}
-                theme="outline"       Gives it the border you want 
-                size="large"        /Makes it fill the space better 
-                text="signin_with"  /* Options: signup_with, continue_with 
-                shape="rectangular" /* Matches your input field corners 
-                width="100%"         Makes it responsive to your grid 
-            />
-           **/ }
-          
-          
-
-          {/* Sign Up Link */}
           <p className="mt-8 text-center text-sm text-gray-600">
             Don't have an account?{" "}
             <Link
               to="/signup"
               className="font-medium text-purple-600 hover:text-purple-700 hover:underline transition-colors"
             >
-              Sign in here
+              Sign Up here
             </Link>
           </p>
         </div>
       </div>
-      </div>
-  
-  )
-}
+    </div>
+  );
+};
 
-export default Register
+export default Register;

@@ -28,7 +28,8 @@ export const navConfig = {
     { name: 'Status', path: '/doctor/status' }
   ],
   pharmacist: [
-    { name: 'Prescription Queue', path: '/pharmacist/queue' },
-    { name: 'History', path: '/pharmacist/history' }
+    { name: 'Dashboard', path: '/pharmacist/dashboard' },
+    { name: 'Pending', path: '/pharmacist/pending' },
+    { name: 'History', path: '/pharmacist/dispensed' }
   ]
 };

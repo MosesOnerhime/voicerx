@@ -9,6 +9,9 @@ import { RoleGuard } from './components/RoleGuard';
 import RecordNewPatient from './pages/nurse/RecordNewPatient';
 import SignUp from './pages/SignUp';
 import AdminDashboard from './pages/AdminDBD';
+import PharmacyDashboard from './pages/pharmacy/PharmacyOverview';
+import PharmacyPending from './pages/pharmacy/PharmacyPending';
+import PharmacyDispensed from './pages/pharmacy/PharmacyDispensed';
 
 
 function App() {
@@ -32,6 +35,11 @@ function App() {
           <Route path="/nurse/dashboard" element={<NurseOverview />} />
           <Route path="/nurse/patients" element={<PatientsPage />} />
           <Route path="/nurse/register-patient" element={<RecordNewPatient />} />
+
+          {/* Pharmacist Routes */}
+          <Route path="/pharmacy/dashboard" element={<PharmacyDashboard />} />
+          <Route path="/pharmacy/pending" element={<PharmacyPending />} />
+          <Route path="/pharmacy/dispensed" element={<PharmacyDispensed />} />
 
         </Route>
 
