@@ -1,12 +1,46 @@
 'use client'
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Eye, EyeOff, Building2, Loader2, ArrowRight } from "lucide-react";
+import { Eye, EyeOff, Building2, Loader2, ArrowRight, Sparkles } from "lucide-react";
 import { toast } from "../hooks/use-toast";
 import axios from "axios";
 
 // Environment variable for API URL
-const API_URL = 'http://localhost:3000/api';
+const API_URL = 'http://localhost:5001/api';
+
+// Demo data arrays for generating random credentials
+const hospitalPrefixes = ["Lagos", "Abuja", "Ibadan", "Kano", "Port Harcourt", "Enugu", "Kaduna", "Benin", "Onitsha", "Owerri"];
+const hospitalTypes = ["General Hospital", "Medical Center", "Teaching Hospital", "Specialist Hospital", "Health Clinic", "Memorial Hospital"];
+const streets = ["Marina Street", "Broad Street", "Adeola Odeku", "Allen Avenue", "Awolowo Road", "Herbert Macaulay Way", "Ozumba Mbadiwe", "Ademola Adetokunbo"];
+const cities = ["Lagos", "Abuja", "Ibadan", "Kano", "Port Harcourt", "Enugu"];
+const firstNames = ["Adebayo", "Chioma", "Emeka", "Fatima", "Gbenga", "Halima", "Ibrahim", "Janet", "Kunle", "Lola", "Musa", "Ngozi", "Oluwaseun", "Patience"];
+const lastNames = ["Ogundimu", "Okonkwo", "Abdullahi", "Adeyemi", "Chukwu", "Bello", "Eze", "Abubakar", "Okafor", "Yusuf", "Nnamdi", "Olawale"];
+
+// Generate random demo data
+const generateDemoData = () => {
+  const randomId = Math.floor(Math.random() * 100000);
+  const hospitalPrefix = hospitalPrefixes[Math.floor(Math.random() * hospitalPrefixes.length)];
+  const hospitalType = hospitalTypes[Math.floor(Math.random() * hospitalTypes.length)];
+  const hospitalName = `${hospitalPrefix} ${hospitalType}`;
+  const street = streets[Math.floor(Math.random() * streets.length)];
+  const city = cities[Math.floor(Math.random() * cities.length)];
+  const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+  const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+  const emailDomain = hospitalName.toLowerCase().replace(/\s+/g, '').slice(0, 15);
+
+  return {
+    hospitalName,
+    hospitalEmail: `info${randomId}@${emailDomain}.com`,
+    hospitalPhone: `+234${Math.floor(Math.random() * 9000000000) + 1000000000}`,
+    hospitalAddress: `${Math.floor(Math.random() * 200) + 1} ${street}, ${city}`,
+    registrationNumber: `REG${randomId}`,
+    adminFirstName: firstName,
+    adminLastName: lastName,
+    adminEmail: `${firstName.toLowerCase()}.${lastName.toLowerCase()}${randomId}@${emailDomain}.com`,
+    adminPassword: "DemoPass123",
+    confirmPassword: "DemoPass123"
+  };
+};
 
 export default function SignUp() {
   const navigate = useNavigate();
@@ -24,12 +58,23 @@ export default function SignUp() {
     adminLastName: "",
     adminEmail: "",
     adminPassword: "",
-    confirmPassword: "" 
+    confirmPassword: ""
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  // Fill form with demo data
+  const fillDemoData = () => {
+    const demoData = generateDemoData();
+    setFormData(demoData);
+    toast({
+      title: "Demo Data Filled!",
+      description: `Hospital: ${demoData.hospitalName}`,
+      className: "bg-purple-600 text-white"
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -44,22 +89,18 @@ export default function SignUp() {
     }
 
     try {
-      // 2. Prepare Payload
+      // 2. Prepare Payload (flat structure matching backend expectation)
       const payload = {
-        hospital: {
-          name: formData.hospitalName,
-          email: formData.hospitalEmail,
-          phone: formData.hospitalPhone,
-          address: formData.hospitalAddress,
-          registrationNumber: formData.registrationNumber,
-        },
-        admin: {
-          firstname: formData.adminFirstName,
-          lastname: formData.adminLastName,
-          email: formData.adminEmail,
-          password: formData.adminPassword,
-          role: "admin"
-        }
+        hospitalName: formData.hospitalName,
+        email: formData.hospitalEmail,
+        phone: formData.hospitalPhone,
+        address: formData.hospitalAddress,
+        registrationNumber: formData.registrationNumber,
+        adminFirstName: formData.adminFirstName,
+        adminLastName: formData.adminLastName,
+        adminEmail: formData.adminEmail,
+        adminPhone: formData.hospitalPhone, // Using hospital phone as admin phone
+        adminPassword: formData.adminPassword,
       };
 
       // 3. API Call
@@ -125,8 +166,19 @@ export default function SignUp() {
           
           {/* Logo/Header */}
           <div className="mb-8">
-            <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-violet-500 rounded-xl mb-4 flex items-center justify-center">
-              <Building2 className="w-7 h-7 text-white" />
+            <div className="flex items-center justify-between">
+              <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-violet-500 rounded-xl mb-4 flex items-center justify-center">
+                <Building2 className="w-7 h-7 text-white" />
+              </div>
+              {/* Demo Data Button */}
+              <button
+                type="button"
+                onClick={fillDemoData}
+                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-sm font-medium rounded-lg hover:from-amber-600 hover:to-orange-600 transition-all shadow-md hover:shadow-lg"
+              >
+                <Sparkles className="w-4 h-4" />
+                Fill Demo Data
+              </button>
             </div>
             <h2 className="text-3xl font-heading font-bold text-gray-900 mb-2">
               Register Hospital

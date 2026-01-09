@@ -1,5 +1,4 @@
-//import { useState, useRef, useEffect  } from "react";
-//import { GoogleLogin } from '@react-oauth/google';
+import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { authApi } from "../components/auth";
 import { useForm } from "react-hook-form";
@@ -7,22 +6,30 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginFormValues } from "../services/schema";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "../store/authSlice";
+import { Sparkles } from "lucide-react";
 
-
-
+// Demo credentials for quick testing
+const demoAccounts = [
+  { email: "admin@testhospital.com", password: "TestPassword123", label: "Test Hospital Admin" },
+];
 
 
 const Register = () => {
-
-   
   const dispatch = useDispatch();
   const navigate = useNavigate();
- 
+  const [demoIndex, setDemoIndex] = useState(0);
 
-
-   const { register, handleSubmit:handleFormSubmit, setError, formState: { errors, isSubmitting } } = useForm<LoginFormValues>({
+  const { register, handleSubmit: handleFormSubmit, setError, setValue, formState: { errors, isSubmitting } } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
   });
+
+  // Fill form with demo credentials (cycles through available accounts)
+  const fillDemoCredentials = () => {
+    const demo = demoAccounts[demoIndex];
+    setValue("email", demo.email);
+    setValue("password", demo.password);
+    setDemoIndex((prev) => (prev + 1) % demoAccounts.length);
+  };
 
 
   const onSubmit = async (data: LoginFormValues) => {
@@ -95,20 +102,31 @@ const Register = () => {
         <div className="w-full max-w-md">
           {/* Logo/Header */}
           <div className="mb-8">
-            <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-violet-500 rounded-xl mb-4 flex items-center justify-center">
-              <svg
-                className="w-7 h-7 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+            <div className="flex items-center justify-between">
+              <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-violet-500 rounded-xl mb-4 flex items-center justify-center">
+                <svg
+                  className="w-7 h-7 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                  />
+                </svg>
+              </div>
+              {/* Demo Login Button */}
+              <button
+                type="button"
+                onClick={fillDemoCredentials}
+                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-sm font-medium rounded-lg hover:from-amber-600 hover:to-orange-600 transition-all shadow-md hover:shadow-lg"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                />
-              </svg>
+                <Sparkles className="w-4 h-4" />
+                Demo Login
+              </button>
             </div>
             <h2 className="text-3xl font-heading font-bold text-gray-900 mb-2">
               Welcome back

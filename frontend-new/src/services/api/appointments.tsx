@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { type Appointment } from '../types/db';
 
-const API_URL = 'http://localhost:3000/api';
+const API_URL = 'http://localhost:5001/api';
 
 export const appointmentApi = {
   getNurseQueue: async (token: string) => {
