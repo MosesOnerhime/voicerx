@@ -1,73 +1,120 @@
-# React + TypeScript + Vite
+# VoiceRX Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern healthcare management frontend built with React, TypeScript, and Vite.
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **React 19** - UI Framework
+- **TypeScript** - Type Safety
+- **Vite** - Build Tool
+- **Tailwind CSS** - Styling
+- **React Router** - Navigation
+- **Redux Toolkit** - State Management
+- **Axios** - HTTP Client
+- **React Hook Form** - Form Handling
+- **Zod** - Schema Validation
+- **Lucide React** - Icons
 
-## React Compiler
+## Getting Started
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+### Prerequisites
 
-## Expanding the ESLint configuration
+- Node.js 18+
+- npm or yarn
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Installation
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+```bash
+# Install dependencies
+npm install
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Start development server
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+The app will be available at `http://localhost:5173`
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Environment
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+The frontend connects to the backend API at `http://localhost:5001/api`
+
+## Project Structure
+
 ```
+src/
+├── components/          # Reusable UI components
+│   ├── ui/             # Base UI components (Button, Input, etc.)
+│   ├── auth.tsx        # Authentication API calls
+│   ├── Gendashboard.tsx # Dashboard layout wrapper
+│   ├── PatientCard.tsx  # Patient display card
+│   └── ...
+├── pages/              # Page components
+│   ├── Register.tsx    # Login page
+│   ├── SignUp.tsx      # Hospital registration
+│   ├── AdminDBD.tsx    # Admin dashboard
+│   └── nurse/          # Nurse-specific pages
+│       ├── NurseOverview.tsx
+│       ├── PatientsPage.tsx
+│       └── RecordNewPatient.tsx
+├── services/           # API services and types
+│   ├── api/           # API call functions
+│   └── types/         # TypeScript types
+├── store/             # Redux store
+│   ├── index.ts
+│   └── authSlice.tsx
+├── hooks/             # Custom React hooks
+├── lib/               # Utility functions
+└── App.tsx            # Main app component
+```
+
+## Available Routes
+
+| Route | Description | Access |
+|-------|-------------|--------|
+| `/` | Login page | Public |
+| `/signup` | Hospital registration | Public |
+| `/admin/dashboard` | Admin dashboard | Admin |
+| `/nurse/dashboard` | Nurse queue overview | Nurse |
+| `/nurse/patients` | Patient registry | Nurse |
+| `/nurse/register-patient` | Register new patient | Nurse |
+
+## Demo Credentials
+
+For testing purposes, use the demo buttons on login/signup pages:
+
+**Login Page:**
+- Click "Demo Login" button
+- Email: `admin@testhospital.com`
+- Password: `TestPassword123`
+
+**SignUp Page:**
+- Click "Fill Demo Data" button
+- Generates random Nigerian hospital data
+
+## Scripts
+
+```bash
+npm run dev      # Start development server
+npm run build    # Build for production
+npm run preview  # Preview production build
+npm run lint     # Run ESLint
+```
+
+## Features
+
+- Hospital Registration & Authentication
+- Role-based Dashboards (Admin, Nurse, Doctor, Pharmacist)
+- Patient Management
+- Appointment Queue System
+- Vitals Recording
+- Real-time Status Updates
+
+## API Integration
+
+The frontend communicates with the backend API:
+
+- `POST /api/auth/register` - Hospital registration
+- `POST /api/auth/login` - User login
+- `GET /api/patients` - Get patients list
+- `GET /api/appointments` - Get appointments
+- `POST /api/appointments` - Create appointment
