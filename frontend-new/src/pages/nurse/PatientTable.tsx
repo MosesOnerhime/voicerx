@@ -1,0 +1,200 @@
+'use client'
+import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { type RootState } from '../../store';
+import { patientApi } from '../../services/api/patients';
+import { CreateAppointmentDialog } from "../../components/CreateAppointmentDialog";
+import { toast } from "../../hooks/use-toast";
+import { type Patient } from '../../services/types/db';
+import { useNavigate } from 'react-router-dom';
+
+//apis
+import { appointmentApi } from '../../services/api/appointments';
+
+// UI Components
+import { Badge } from "../../components/ui/badge";
+import { Button } from "../../components/ui/button";
+import { MoreHorizontal, Edit, Trash2, CalendarPlus, User } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../../components/ui/dropdown-menu";
+
+const statusStyles = {
+  Active: "bg-green-500/10 text-green-600 border-green-500/20",
+  Inactive: "bg-muted text-muted-foreground border-border",
+};
+
+const PatientTable = () => {
+    const navigate = useNavigate();
+  const { token } = useSelector((state: RootState) => state.auth);
+  const [patients, setPatients] = useState<Patient[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const [isApptDialogOpen, setIsApptDialogOpen] = useState(false);
+  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
+
+  const handleOpenApptDialog = (patient: Patient) => {
+    setSelectedPatient(patient);
+    setIsApptDialogOpen(true);
+  };
+
+  const handleCreateAppointment = async (payload: any) => {
+        if (!token) {
+    toast({ variant: "destructive", title: "Error", description: "You are not authenticated." });
+    return;
+  }
+    try {
+    console.log("Sending to backend:", payload);
+
+    
+    // We 'await' the result so the 'catch' block can catch any server errors
+    await appointmentApi.create(payload, token); 
+
+    toast({
+      title: "Success",
+      description: `Appointment created for ${payload.patient_name}`,
+    });
+
+    // 3. Optional: Redirect the nurse back to the dashboard to see the queue
+    // navigate('/nurse/dashboard');
+
+  } catch (error: any) {
+    // This runs if the server is down, the token is expired, or data is invalid
+    console.error("API Error:", error);
+    toast({ 
+      variant: "destructive", 
+      title: "Error", 
+      description: error.response?.data?.message || "Failed to create appointment" 
+    });
+
+}
+};
+
+  useEffect(() => {
+    const fetchPatients = async () => {
+      if (!token) return;
+      try {
+        const data = await patientApi.getAll(token);
+        setPatients(data);
+      } catch (error) {
+        console.error("Failed to fetch patients", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchPatients();
+  }, [token]);
+
+  return (
+    <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden animate-fade-in">
+      <div className="p-6 border-b border-border bg-white/50">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-lg font-semibold text-foreground">Patient Registry</h3>
+            <p className="text-sm text-muted-foreground">Manage all registered hospital patients</p>
+          </div>
+          <Button size="sm" className="bg-primary text-white hover:opacity-90">
+            Register New Patient
+          </Button>
+        </div>
+      </div>
+
+      <div className="overflow-x-auto">
+        <table className="w-full text-left">
+          <thead>
+            <tr className="border-b border-border bg-muted/30">
+              <th className="px-6 py-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">Patient Name</th>
+              <th className="px-6 py-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">Gender</th>
+              <th className="px-6 py-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</th>
+              <th className="px-6 py-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">Joined At</th>
+              <th className="px-6 py-4 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-border">
+            {isLoading ? (
+              <tr><td colSpan={5} className="px-6 py-10 text-center text-muted-foreground">Loading patients...</td></tr>
+            ) : patients.map((patient, index) => (
+              <tr
+                key={patient.id}
+                className="hover:bg-muted/30 transition-colors animate-slide-in"
+                style={{ animationDelay: `${index * 50}ms` }}
+              >
+                <td className="px-6 py-4">
+                  <div className="flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs">
+                      {patient.first_name[0]}{patient.last_name[0]}
+                    </div>
+                    <div>
+                      <p className="font-medium text-foreground">{patient.first_name} {patient.last_name}</p>
+                      <p className="text-xs text-muted-foreground">{patient.patient_id_number}</p>
+                    </div>
+                  </div>
+                </td>
+                <td className="px-6 py-4 text-sm text-muted-foreground">
+                  {patient.gender}
+                </td>
+                <td className="px-6 py-4">
+                  <Badge
+                    variant="outline"
+                    className={statusStyles[patient.status as keyof typeof statusStyles]}
+                  >
+                    {patient.status}
+                  </Badge>
+                </td>
+                <td className="px-6 py-4 text-sm text-muted-foreground">
+                  {new Date(patient.registered_at).toLocaleDateString()}
+                </td>
+                <td className="px-6 py-4 text-right">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <MoreHorizontal size={16} />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-48">
+                      <DropdownMenuLabel>Patient Options</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem className="cursor-pointer text-primary focus:text-primary"
+                      onClick={() => handleOpenApptDialog(patient)}>
+                        <CalendarPlus size={14} className="mr-2" />
+                        Create Appointment
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="cursor-pointer" onClick={() => navigate(`/nurse/patients/${patient.id}`)}>
+                        <User size={14} className="mr-2" />
+                        View Profile
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="cursor-pointer" onClick={() => navigate(`/nurse/patients/${patient.id}?edit=true`)}>
+                        <Edit size={14} className="mr-2" />
+                        Edit Details
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem className="text-destructive focus:bg-destructive/10 cursor-pointer">
+                        <Trash2 size={14} className="mr-2" />
+                        Archive Patient
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/*Dialog component*/}
+      <CreateAppointmentDialog 
+        open={isApptDialogOpen}
+        onOpenChange={setIsApptDialogOpen}
+        patient={selectedPatient}
+        onSubmit={handleCreateAppointment}
+      />
+    </div>
+  );
+};
+
+export default PatientTable
