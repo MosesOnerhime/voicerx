@@ -5,16 +5,16 @@ import Register from './pages/Register'
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import NurseOverview from './pages/nurse/NurseOverview';
 import PatientsPage from './pages/nurse/PatientsPage';
-//import { Appointment } from './pages/nurse/Appointment'
 import { RoleGuard } from './components/RoleGuard';
 import RecordNewPatient from './pages/nurse/RecordNewPatient';
 import SignUp from './pages/SignUp';
+import AdminDashboard from './pages/AdminDBD';
 
 
 function App() {
-  
+
   return(
-    
+
     <BrowserRouter>
       <Routes>
 
@@ -24,19 +24,20 @@ function App() {
 
         {/* Protected Dashboard Routes */}
         <Route element={<Gendashboard />}>
-    
-        {/* Nurse Protected Routes */}
-        {/*<Route element={<RoleGuard allowedRoles={['nurse', 'admin']} />}>*/}
-           <Route path="/nurse/dashboard" element={<NurseOverview />} />
-           <Route path="/nurse/patients" element={<PatientsPage />} />
-           <Route path="/nurse/register-patient" element={<RecordNewPatient />} />
-      
+
+          {/* Admin Routes */}
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+
+          {/* Nurse Routes */}
+          <Route path="/nurse/dashboard" element={<NurseOverview />} />
+          <Route path="/nurse/patients" element={<PatientsPage />} />
+          <Route path="/nurse/register-patient" element={<RecordNewPatient />} />
+
         </Route>
-        {/*</Route>*/}
 
       </Routes>
     </BrowserRouter>
-    
+
   )
 }
 

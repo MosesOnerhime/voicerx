@@ -43,7 +43,7 @@ const Register = () => {
       dispatch(setCredentials({ user: result.user, token: result.token }));
       
       // 3. Redirect (e.g., navigate('/dashboard'))
-      const role= result.user.role;
+      const role = result.user.role.toLowerCase();
       navigate(`/${role}/dashboard`);
      
     } catch (error: any) {
