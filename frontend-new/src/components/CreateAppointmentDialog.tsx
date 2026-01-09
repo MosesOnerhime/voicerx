@@ -16,25 +16,23 @@ interface CreateAppointmentProps {
 
 export function CreateAppointmentDialog({ patient, open, onOpenChange, onSubmit }: CreateAppointmentProps) {
   const [complaint, setComplaint] = useState("");
-  const [priority, setPriority] = useState("Normal");
+  const [priority, setPriority] = useState("NORMAL");
 
   const handleSave = () => {
     if (!patient) return;
 
+    // Backend expects: patientId, chiefComplaint, priority (UPPERCASE)
     const appointmentPayload = {
-      type: "new_appointment",
-      appointment_id: uuidv4(), // Client-side generated UUID
-      patient_name: `${patient.first_name} ${patient.last_name}`,
+      patientId: patient.id,
+      chiefComplaint: complaint,
       priority: priority,
-      chief_complaint: complaint, // Additional field for the UI
-      status: "Created"
     };
 
     onSubmit(appointmentPayload);
     onOpenChange(false);
     // Reset form
     setComplaint("");
-    setPriority("Normal");
+    setPriority("NORMAL");
   };
 
   return (
@@ -43,16 +41,16 @@ export function CreateAppointmentDialog({ patient, open, onOpenChange, onSubmit 
         <DialogHeader>
           <DialogTitle>Create Appointment</DialogTitle>
           <p className="text-sm text-muted-foreground">
-            Scheduling for: <span className="font-medium text-foreground">{patient?.first_name} {patient?.last_name}</span>
+            Scheduling for: <span className="font-medium text-foreground">{patient?.firstName} {patient?.lastName}</span>
           </p>
         </DialogHeader>
 
         <div className="grid gap-4 py-4">
           <div className="grid gap-2">
             <Label htmlFor="complaint">Chief Complaint</Label>
-            <Textarea 
-              id="complaint" 
-              placeholder="e.g. Persistent cough, high fever..." 
+            <Textarea
+              id="complaint"
+              placeholder="e.g. Persistent cough, high fever..."
               value={complaint}
               onChange={(e) => setComplaint(e.target.value)}
             />
@@ -64,9 +62,9 @@ export function CreateAppointmentDialog({ patient, open, onOpenChange, onSubmit 
                 <SelectValue placeholder="Select priority" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Normal">Normal</SelectItem>
-                <SelectItem value="Urgent">Urgent</SelectItem>
-                <SelectItem value="Emergency">Emergency</SelectItem>
+                <SelectItem value="NORMAL">Normal</SelectItem>
+                <SelectItem value="URGENT">Urgent</SelectItem>
+                <SelectItem value="EMERGENCY">Emergency</SelectItem>
               </SelectContent>
             </Select>
           </div>

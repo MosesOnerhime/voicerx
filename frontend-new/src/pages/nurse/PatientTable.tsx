@@ -25,8 +25,8 @@ import {
 } from "../../components/ui/dropdown-menu";
 
 const statusStyles = {
-  Active: "bg-green-500/10 text-green-600 border-green-500/20",
-  Inactive: "bg-muted text-muted-foreground border-border",
+  ACTIVE: "bg-green-500/10 text-green-600 border-green-500/20",
+  INACTIVE: "bg-muted text-muted-foreground border-border",
 };
 
 const PatientTable = () => {
@@ -57,7 +57,7 @@ const PatientTable = () => {
 
     toast({
       title: "Success",
-      description: `Appointment created for ${payload.patient_name}`,
+      description: "Appointment created successfully",
     });
 
     // 3. Optional: Redirect the nurse back to the dashboard to see the queue
@@ -127,11 +127,11 @@ const PatientTable = () => {
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
                     <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs">
-                      {patient.first_name[0]}{patient.last_name[0]}
+                      {patient.firstName[0]}{patient.lastName[0]}
                     </div>
                     <div>
-                      <p className="font-medium text-foreground">{patient.first_name} {patient.last_name}</p>
-                      <p className="text-xs text-muted-foreground">{patient.patient_id_number}</p>
+                      <p className="font-medium text-foreground">{patient.firstName} {patient.lastName}</p>
+                      <p className="text-xs text-muted-foreground">{patient.patientIdNumber}</p>
                     </div>
                   </div>
                 </td>
@@ -147,7 +147,7 @@ const PatientTable = () => {
                   </Badge>
                 </td>
                 <td className="px-6 py-4 text-sm text-muted-foreground">
-                  {new Date(patient.registered_at).toLocaleDateString()}
+                  {new Date(patient.registeredAt).toLocaleDateString()}
                 </td>
                 <td className="px-6 py-4 text-right">
                   <DropdownMenu>

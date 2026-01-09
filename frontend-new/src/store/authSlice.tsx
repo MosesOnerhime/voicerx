@@ -3,12 +3,12 @@ import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 // 1. Define strict types for Roles so you don't make typos later
 export type UserRole = 'nurse' | 'admin' | 'doctor' | 'pharmacist';
 
-// 2. Define the User structure matching your Backend response
+// 2. Define the User structure matching your Backend response (camelCase)
 export interface User {
   id: string;
   email: string;
-  first_name: string;
-  last_name: string;
+  firstName: string;
+  lastName: string;
   role: UserRole;
   avatar?: string; // Optional profile picture URL
 }

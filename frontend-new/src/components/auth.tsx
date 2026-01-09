@@ -7,8 +7,7 @@ export interface RegisterFormValues extends LoginFormValues {
 }
 
 const api = axios.create({
-  // Removed '/app' and ensured it points to the backend port
-  baseURL: 'http://localhost:3001/api', 
+  baseURL: 'http://localhost:3000/api',
   headers: {
     'Content-Type': 'application/json',
   },

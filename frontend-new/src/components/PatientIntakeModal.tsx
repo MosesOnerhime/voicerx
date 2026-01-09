@@ -85,9 +85,9 @@ export function PatientIntakeModal({ appointment, open, onOpenChange }: PatientI
                 <User className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                <span className="block">{appointment.patient?.first_name} {appointment.patient?.last_name}</span>
+                <span className="block">{appointment.patient?.firstName} {appointment.patient?.lastName}</span>
                 <span className="text-xs font-normal text-muted-foreground uppercase tracking-wider">
-                    {appointment.appointment_number}
+                    {appointment.appointmentNumber}
                 </span>
                 </div>
             </div>

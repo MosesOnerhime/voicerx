@@ -46,11 +46,11 @@ export default function NurseOverview() {
             setIsLoading(true);
             const data = await appointmentApi.getNurseQueue(token);
             
-            // Sort: Emergency > Urgent > Normal
-            const priorityOrder: Record<string, number> = { 
-                Emergency: 3, 
-                Urgent: 2, 
-                Normal: 1 
+            // Sort: Emergency > Urgent > Normal (UPPERCASE to match backend)
+            const priorityOrder: Record<string, number> = {
+                EMERGENCY: 3,
+                URGENT: 2,
+                NORMAL: 1
                 };
 
                 const sorted = data.sort((a, b) => {
@@ -70,17 +70,17 @@ export default function NurseOverview() {
     // 2. Computed Stats based on DB Schema
     const stats = useMemo(() => ({
         totalPatients: appointments.length,
-        awaitingVitals: appointments.filter(a => a.status === "Created").length,
-        awaitingDoctor: appointments.filter(a => a.status === "Vitals_Recorded").length,
+        awaitingVitals: appointments.filter(a => a.status === "CREATED").length,
+        awaitingDoctor: appointments.filter(a => a.status === "VITALS_RECORDED").length,
         avgWaitTime: "12 min", // This would ideally come from backend analytics
     }), [appointments]);
 
     // 3. Filtered Appointments (Search logic)
     const filteredAppointments = useMemo(() => {
         return appointments.filter(apt => {
-            const fullName = `${apt.patient?.first_name} ${apt.patient?.last_name}`.toLowerCase();
+            const fullName = `${apt.patient?.firstName} ${apt.patient?.lastName}`.toLowerCase();
             const search = searchQuery.toLowerCase();
-            return fullName.includes(search) || apt.appointment_number.toLowerCase().includes(search);
+            return fullName.includes(search) || apt.appointmentNumber.toLowerCase().includes(search);
         });
     }, [appointments, searchQuery]);
 
@@ -160,12 +160,12 @@ return (
                                 <div key={apt.id} className="animate-fade-in" style={{ animationDelay: `${0.05 * index}s` }}>
                                     <PatientCard
                                         // Pass data from the Appointment object
-                                        id={apt.appointment_number}
-                                        name={`${apt.patient?.first_name} ${apt.patient?.last_name}`}
+                                        id={apt.appointmentNumber}
+                                        name={`${apt.patient?.firstName} ${apt.patient?.lastName}`}
                                         status={apt.status}
                                         priority={apt.priority}
-                                        waitingTime={`${new Date(apt.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
-                                        
+                                        waitingTime={`${new Date(apt.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
+
                                         // Actions
                                         onClick={() => handleRecordVitals(apt)}
                                         onRecordVitals={() => handleRecordVitals(apt)}
@@ -191,8 +191,8 @@ return (
                     open={doctorDialogOpen}
                     onOpenChange={setDoctorDialogOpen}
                     appointmentId={selectedAppointment.id}
-                    patientName={`${selectedAppointment.patient?.first_name} ${selectedAppointment.patient?.last_name}`}
-                    patientId={selectedAppointment.patient_id} 
+                    patientName={`${selectedAppointment.patient?.firstName} ${selectedAppointment.patient?.lastName}`}
+                    patientId={selectedAppointment.patientId}
                     doctors={[]} // For now, pass an empty array or your list of doctors
                     onAssign={fetchQueue} // Pass your refresh function to reload the queue after assignment
                 />
