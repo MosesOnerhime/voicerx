@@ -12,54 +12,41 @@
 // 4. Returns hospital and admin details
 // ============================================================
 
-// ============================================================
-// API ROUTE: /api/auth/hospital/register
-// ============================================================
 import { hash } from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
 
-// Handle CORS preflight (OPTIONS request)
-export async function OPTIONS(request) {
-  return new Response(null, {
-    status: 200, // Some browsers prefer 200 over 204
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-      'Access-Control-Max-Age': '86400', // Cache preflight for 24 hours
-    },
-  });
-}
-
 export async function POST(request) {
-  // Add CORS headers to every response
-  const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-  };
-
   try {
     const body = await request.json();
-    
-    console.log('Received registration request:', body); // Debug log
 
-    const { hospital, admin } = body;
+    // Extract data from request
+    const {
+      hospitalName,
+      email,
+      phone,
+      address,
+      registrationNumber,
+      adminFirstName,
+      adminLastName,
+      adminEmail,
+      adminPhone,
+      adminPassword,
+    } = body;
 
     // Validate required fields
-    if (!hospital?.name || !hospital?.email || !hospital?.phone || 
-        !admin?.firstname || !admin?.lastname || !admin?.email || !admin?.password) {
+    if (!hospitalName || !email || !phone || !adminFirstName || 
+        !adminLastName || !adminEmail || !adminPhone || !adminPassword) {
       return Response.json(
         { error: 'All required fields must be provided' },
-        { status: 400, headers: corsHeaders }
+        { status: 400 }
       );
     }
 
     // Validate password length
-    if (admin.password.length < 8) {
+    if (adminPassword.length < 8) {
       return Response.json(
         { error: 'Password must be at least 8 characters' },
-        { status: 400, headers: corsHeaders }
+        { status: 400 }
       );
     }
 
@@ -67,8 +54,8 @@ export async function POST(request) {
     const existingHospital = await prisma.hospital.findFirst({
       where: {
         OR: [
-          { email: hospital.email },
-          ...(hospital.registrationNo ? [{ registrationNumber: hospital.registrationNo }] : []),
+          { email: email },
+          registrationNumber ? { registrationNumber } : {},
         ],
       },
     });
@@ -76,45 +63,47 @@ export async function POST(request) {
     if (existingHospital) {
       return Response.json(
         { error: 'Hospital with this email or registration number already exists' },
-        { status: 400, headers: corsHeaders }
+        { status: 400 }
       );
     }
 
     // Check if admin email already exists
     const existingUser = await prisma.user.findUnique({
-      where: { email: admin.email },
+      where: { email: adminEmail },
     });
 
     if (existingUser) {
       return Response.json(
         { error: 'Admin email already exists' },
-        { status: 400, headers: corsHeaders }
+        { status: 400 }
       );
     }
 
-    // Hash password
-    const hashedPassword = await hash(admin.password, 12);
+    // Hash password for security
+    const hashedPassword = await hash(adminPassword, 12);
 
-    // Create hospital and admin in transaction
+    // Create hospital and admin user in a transaction (all or nothing)
     const result = await prisma.$transaction(async (tx) => {
-      const hospitalRecord = await tx.hospital.create({
+      // Step 1: Create hospital
+      const hospital = await tx.hospital.create({
         data: {
-          name: hospital.name,
-          email: hospital.email,
-          phone: hospital.phone,
-          address: hospital.address,
-          registrationNumber: hospital.registrationNo,
+          name: hospitalName,
+          email: email,
+          phone: phone,
+          address: address,
+          registrationNumber: registrationNumber,
           isActive: true,
         },
       });
 
+      // Step 2: Create admin user for the hospital
       const adminUser = await tx.user.create({
         data: {
-          hospitalId: hospitalRecord.id,
-          firstName: admin.firstname,
-          lastName: admin.lastname,
-          email: admin.email,
-          phone: hospital.phone,
+          hospitalId: hospital.id,
+          firstName: adminFirstName,
+          lastName: adminLastName,
+          email: adminEmail,
+          phone: adminPhone,
           role: 'ADMIN',
           passwordHash: hashedPassword,
           isActive: true,
@@ -122,11 +111,10 @@ export async function POST(request) {
         },
       });
 
-      return { hospital: hospitalRecord, adminUser };
+      return { hospital, adminUser };
     });
 
-    console.log('Registration successful:', result.hospital.id); // Debug log
-
+    // Return success response
     return Response.json(
       {
         message: 'Hospital registered successfully',
@@ -141,16 +129,13 @@ export async function POST(request) {
           email: result.adminUser.email,
         },
       },
-      { status: 201, headers: corsHeaders }
+      { status: 201 }
     );
   } catch (error) {
     console.error('Hospital registration error:', error);
     return Response.json(
-      { 
-        error: 'Internal server error', 
-        details: process.env.NODE_ENV === 'development' ? error.message : undefined 
-      },
-      { status: 500, headers: corsHeaders }
+      { error: 'Internal server error' },
+      { status: 500 }
     );
   }
 }
