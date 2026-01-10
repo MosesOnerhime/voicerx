@@ -3,7 +3,7 @@ import axios from 'axios';
 // what a Patient looks like in your DB
 import type { Patient } from '../types/db';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = '/api';
 
 export const patientApi = {
   getAll: async (token: string) => {
