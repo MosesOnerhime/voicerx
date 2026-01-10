@@ -1,17 +1,5 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
-
-// 1. Define strict types for Roles so you don't make typos later
-export type UserRole = 'nurse' | 'admin' | 'doctor' | 'pharmacist';
-
-// 2. Define the User structure matching your Backend response (camelCase)
-export interface User {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  role: UserRole;
-  avatar?: string; // Optional profile picture URL
-}
+import { type User } from './RootState';
 
 // 3. Define the AuthState (what we store in Redux)
 interface AuthState {
@@ -27,9 +15,9 @@ const storedToken = localStorage.getItem('token');
 const storedUser = localStorage.getItem('user');
 
 const initialState: AuthState = {
-  user: JSON.parse(localStorage.getItem('user') || 'null'),
-  token: localStorage.getItem('token') || null,
-  isAuthenticated: false,
+  user: storedUser ? JSON.parse(storedUser) : null,
+  token: storedToken || null,
+  isAuthenticated: !!storedToken,
   isLoading: false,
 };
 
@@ -55,6 +43,7 @@ const authSlice = createSlice({
     
     // Call this when the user clicks "Logout"
     logout: (state) => {
+      //reset state
       state.user = null;
       state.token = null;
       state.isAuthenticated = false;

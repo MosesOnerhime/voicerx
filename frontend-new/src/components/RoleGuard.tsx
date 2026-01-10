@@ -2,7 +2,7 @@ import { type ReactNode } from 'react';
 import { useSelector } from 'react-redux';
 import { type RootState } from '../store';
 import { Navigate, Outlet } from 'react-router-dom';
-import { type UserRole } from '../store/authSlice';
+import { type UserRole } from '../store/RootState';
 
 interface RoleGuardProps {
   allowedRoles: UserRole[];

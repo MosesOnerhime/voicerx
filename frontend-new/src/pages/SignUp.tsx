@@ -5,8 +5,8 @@ import { Eye, EyeOff, Building2, Loader2, ArrowRight, Sparkles } from "lucide-re
 import { toast } from "../hooks/use-toast";
 import axios from "axios";
 
-// Environment variable for API URL
-const API_URL = 'http://localhost:5001/api';
+// API URL - uses Vite proxy to forward to backend
+const API_URL = '/api';
 
 // Demo data arrays for generating random credentials
 const hospitalPrefixes = ["Lagos", "Abuja", "Ibadan", "Kano", "Port Harcourt", "Enugu", "Kaduna", "Benin", "Onitsha", "Owerri"];

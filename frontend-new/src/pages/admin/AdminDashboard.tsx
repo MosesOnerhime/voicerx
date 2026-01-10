@@ -1,13 +1,56 @@
-import { Building2, Users, CheckCircle, Clock } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Building2, Users, CheckCircle, Clock, Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
+import { useSelector } from "react-redux";
+import { type RootState } from "../../store";
 
+interface SetupStatus {
+  hospitalProfile: boolean;
+  staffUploaded: boolean;
+  systemStatus: string;
+  stats: {
+    totalStaff: number;
+    totalPatients: number;
+    todayAppointments: number;
+  };
+}
 
 const AdminDashboard = () => {
-  // Mock data - in real app, this would come from API/state
-  const setupStatus = {
-    hospitalProfile: true,
-    staffUploaded: false,
-  };
+  const { token, user } = useSelector((state: RootState) => state.auth);
+  const [setupStatus, setSetupStatus] = useState<SetupStatus | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchSetupStatus = async () => {
+      try {
+        const response = await fetch("/api/admin/setup-status", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setSetupStatus(data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch setup status:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (token) {
+      fetchSetupStatus();
+    }
+  }, [token]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
    
@@ -15,7 +58,7 @@ const AdminDashboard = () => {
         {/* Welcome Header */}
         <div>
           <h1 className="text-3xl font-bold text-foreground">
-            Welcome back, Admin
+            Welcome back, {user?.firstName || 'Admin'}
           </h1>
           <p className="text-muted-foreground mt-1">
             Here's an overview of your healthcare system setup
@@ -33,7 +76,7 @@ const AdminDashboard = () => {
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-2">
-                {setupStatus.hospitalProfile ? (
+                {setupStatus?.hospitalProfile ? (
                   <>
                     <CheckCircle className="h-5 w-5 text-success" />
                     <span className="text-lg font-semibold text-success">
@@ -50,7 +93,7 @@ const AdminDashboard = () => {
                 )}
               </div>
               <p className="text-sm text-muted-foreground mt-2">
-                {setupStatus.hospitalProfile
+                {setupStatus?.hospitalProfile
                   ? "Your hospital information is complete"
                   : "Complete your hospital profile to continue"}
               </p>
@@ -66,7 +109,7 @@ const AdminDashboard = () => {
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-2">
-                {setupStatus.staffUploaded ? (
+                {setupStatus?.staffUploaded ? (
                   <>
                     <CheckCircle className="h-5 w-5 text-success" />
                     <span className="text-lg font-semibold text-success">
@@ -83,7 +126,7 @@ const AdminDashboard = () => {
                 )}
               </div>
               <p className="text-sm text-muted-foreground mt-2">
-                {setupStatus.staffUploaded
+                {setupStatus?.staffUploaded
                   ? "Staff members have been imported"
                   : "Upload your staff list to get started"}
               </p>

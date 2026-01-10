@@ -14,7 +14,6 @@ import {
 
 const SystemSettings = () => {
   return (
-    <DashboardLayout>
       <div className="space-y-6 max-w-3xl">
         {/* Header */}
         <div>

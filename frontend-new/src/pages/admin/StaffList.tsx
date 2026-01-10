@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Users, Eye, Ban, Search } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Users, Eye, Ban, Search, Loader2 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
@@ -19,67 +19,19 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../../components/ui/dialog";
+import { useSelector } from "react-redux";
+import { type RootState } from "../../store";
 
 interface StaffMember {
   id: string;
   firstName: string;
   lastName: string;
   email: string;
-  role: "Doctor" | "Nurse" | "Pharmacist";
-  status: "Invited" | "Active";
+  role: "Doctor" | "Nurse" | "Pharmacist" | "Admin";
+  status: "Invited" | "Active" | "Inactive";
   specialization?: string;
   phone: string;
 }
-
-const mockStaff: StaffMember[] = [
-  {
-    id: "1",
-    firstName: "Sarah",
-    lastName: "Johnson",
-    email: "sarah.johnson@hospital.com",
-    role: "Doctor",
-    status: "Active",
-    specialization: "Cardiology",
-    phone: "+1 (555) 123-4567",
-  },
-  {
-    id: "2",
-    firstName: "Michael",
-    lastName: "Chen",
-    email: "michael.chen@hospital.com",
-    role: "Doctor",
-    status: "Active",
-    specialization: "Neurology",
-    phone: "+1 (555) 234-5678",
-  },
-  {
-    id: "3",
-    firstName: "Emily",
-    lastName: "Davis",
-    email: "emily.davis@hospital.com",
-    role: "Nurse",
-    status: "Active",
-    phone: "+1 (555) 345-6789",
-  },
-  {
-    id: "4",
-    firstName: "James",
-    lastName: "Wilson",
-    email: "james.wilson@hospital.com",
-    role: "Pharmacist",
-    status: "Invited",
-    phone: "+1 (555) 456-7890",
-  },
-  {
-    id: "5",
-    firstName: "Lisa",
-    lastName: "Anderson",
-    email: "lisa.anderson@hospital.com",
-    role: "Nurse",
-    status: "Invited",
-    phone: "+1 (555) 567-8901",
-  },
-];
 
 const getRoleBadgeVariant = (role: StaffMember["role"]) => {
   switch (role) {
@@ -102,20 +54,68 @@ const getStatusBadgeVariant = (status: StaffMember["status"]) => {
 };
 
 const StaffList = () => {
+  const { token } = useSelector((state: RootState) => state.auth);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStaff, setSelectedStaff] = useState<StaffMember | null>(null);
-  const [staff] = useState<StaffMember[]>(mockStaff);
+  const [staff, setStaff] = useState<StaffMember[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const filteredStaff = staff.filter(
-    (member) =>
-      member.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      member.lastName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      member.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      member.role.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  useEffect(() => {
+    const fetchStaff = async () => {
+      try {
+        const params = new URLSearchParams();
+        if (searchQuery) params.append("search", searchQuery);
+
+        const response = await fetch(`/api/admin/staff?${params}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setStaff(data.staff || []);
+        }
+      } catch (error) {
+        console.error("Failed to fetch staff:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (token) {
+      fetchStaff();
+    }
+  }, [token, searchQuery]);
+
+  const handleDisable = async (id: string) => {
+    if (!confirm("Are you sure you want to disable this staff member?")) return;
+
+    try {
+      const response = await fetch(`/api/admin/staff?id=${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.ok) {
+        setStaff(staff.filter(s => s.id !== id));
+      }
+    } catch (error) {
+      console.error("Failed to disable staff:", error);
+    }
+  };
+
+  const filteredStaff = staff;
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
-    <DashboardLayout>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -204,6 +204,7 @@ const StaffList = () => {
                             variant="ghost"
                             size="sm"
                             className="gap-1 text-destructive hover:text-destructive hover:bg-destructive/10"
+                            onClick={() => handleDisable(member.id)}
                           >
                             <Ban className="h-4 w-4" />
                             Disable
