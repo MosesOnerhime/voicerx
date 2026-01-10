@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { Building2, Mail, Phone, MapPin, User } from "lucide-react";
+import { useEffect, useState } from "react";
+
+import { Building2, Mail, Phone, MapPin, User, Hospital } from "lucide-react";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
@@ -7,17 +8,36 @@ import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import { Textarea } from "../../components/ui/textarea";
 import { useToast } from "../../hooks/use-toast";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../store/RootState";
+import axios from "axios";
 
 const HospitalProfile = () => {
   const { toast } = useToast();
+  const { user, token } = useSelector((state: RootState) => state.auth);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    hospitalName: "City General Hospital",
-    businessEmail: "admin@citygeneral.com",
-    phoneNumber: "+1 (555) 123-4567",
-    address: "123 Healthcare Boulevard, Medical District, NY 10001",
-    adminName: "Dr. Sarah Johnson",
-    adminEmail: "sarah.johnson@citygeneral.com",
+    hospitalName: "",
+    businessEmail: "",
+    phoneNumber: "",
+    address: "",
+    adminName: "",
+    adminEmail: "",
   });
+
+  // 1. Fetch current profile data on mount
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        hospitalName: user.hospitalId.name || "",
+        businessEmail: user.hospitalId.email || "", // Official hospital email
+        phoneNumber: user.phone || "",
+        address: user.hospitalId.address || "",
+        adminName: `${user.firstName || ""} ${user.lastName || ""}`.trim(),
+        adminEmail: user.email || "",
+      });
+    }
+  }, [user]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -26,10 +46,36 @@ const HospitalProfile = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: "Profile Updated",
-      description: "Hospital profile has been saved successfully.",
-    });
+    setIsLoading(true);
+    try {
+      const payload = {
+        hospitalName: formData.hospitalName,
+        email: formData.businessEmail,
+        phone: formData.phoneNumber,
+        address: formData.address,
+        adminEmail: formData.adminEmail,
+      };
+
+      // Ensure you pass the Authorization header
+      await axios.put(`${API_URL}/hospital/profile/update`, payload, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      toast({
+        title: "Profile Updated",
+        description: "Your hospital information has been saved successfully.",
+        className: "bg-green-600 text-white"
+      });
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || "Failed to update profile";
+      toast({
+        variant: "destructive",
+        title: "Update Error",
+        description: errorMessage,
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

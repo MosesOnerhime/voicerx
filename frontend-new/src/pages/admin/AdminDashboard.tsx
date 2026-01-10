@@ -164,13 +164,13 @@ const AdminDashboard = () => {
               title="Complete Profile"
               description="Update hospital information"
               icon={Building2}
-              href="/hospital-profile"
+              href="/admin/hospital-profile"
             />
             <QuickActionCard
               title="Upload Staff"
               description="Import staff via CSV"
               icon={Users}
-              href="/staff/upload-staff"
+              href="/admin/staff/upload-staff"
             />
           </div>
         </div>

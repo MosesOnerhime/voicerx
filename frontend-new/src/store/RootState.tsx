@@ -11,6 +11,11 @@ export interface User {
   firstName: string;
   lastName: string;
   role: UserRole;
+  phone: string;
+  hospitalId: {
+    _id: string;
+    name: string;
+  };
   avatar?: string; // Optional profile picture URL
 }
 export interface RootState {
@@ -19,4 +24,15 @@ export interface RootState {
     token: string | null;
     isAuthenticated: boolean;
   };
+}
+
+export interface Hospital {
+    hospitalName: string;
+    hospitalEmail: string;
+    hospitalPhone: string;
+    hospitalAddress: string;
+    registrationNumber: number;
+    adminFirstName: string;
+    adminLastName: string;
+    adminEmail: string;
 }

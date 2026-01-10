@@ -30,10 +30,18 @@ const Gendashboard = () => {
 };
 
   return (
-    <div className="flex h-screen bg-[#F8F9FC] font-subheading">
+    <div className="flex h-screen font-subheading">
       <aside className="w-64 bg-[#29095F] border-r border-gray-200 flex flex-col">
+        {/* Branding Section */}
         <div className="p-6">
-          <h2 className="font-heading text-2xl font-bold text-purple-700">DrVoicerx</h2>
+          <h2 className="font-heading text-xl font-bold text-white truncate">
+            {/* Logic to show Hospital Name or Fallback */}
+            {user?.hospitalId?.name || "HealthFlow"}
+          </h2>
+          {/* Optional: Add a small badge or sub-text */}
+          <p className="text-[10px] text-purple-300 uppercase tracking-widest mt-1">
+            Hospital Management
+          </p>
         </div>
 
         <nav className="flex-1 px-4 space-y-2 mt-4">
@@ -95,7 +103,7 @@ const Gendashboard = () => {
           </div>
         </header>
         
-        <main className="flex-1 overflow-y-auto bg-gray-50 p-8">
+        <main className="flex-1 overflow-y-auto bg-tertiary p-8 font-subheading">
           <Outlet />
         </main>
       </div>
