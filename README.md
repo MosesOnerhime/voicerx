@@ -40,26 +40,59 @@ voicerx/
 
 ## Manual Setup (Without Docker)
 
-### Backend
+**Prerequisites:** Node.js 18+, PostgreSQL installed locally
+
+### Step 1: Set Up Your Database
+
+If you have PostgreSQL installed locally, create a database:
+
+```bash
+# Using psql
+psql -U postgres
+CREATE DATABASE voicerx;
+\q
+```
+
+### Step 2: Configure Environment
+
+Create a `.env` file in the `backend/` folder:
+
+```bash
+cd backend
+cp .env.example .env
+```
+
+Edit `backend/.env` with YOUR PostgreSQL credentials:
+
+```env
+# Replace with your local PostgreSQL credentials
+DATABASE_URL="postgresql://YOUR_USERNAME:YOUR_PASSWORD@localhost:5432/voicerx"
+
+# Keep these as-is for development
+JWT_SECRET="your-secret-key-change-in-production"
+OPENAI_API_KEY="your-openai-api-key"
+```
+
+**Examples:**
+- Mac (default): `postgresql://postgres:postgres@localhost:5432/voicerx`
+- Windows: `postgresql://postgres:yourpassword@localhost:5432/voicerx`
+- Custom user: `postgresql://myuser:mypass@localhost:5432/voicerx`
+
+### Step 3: Run Backend (Terminal 1)
 
 ```bash
 cd backend
 npm install
 npx prisma generate
 npx prisma migrate dev
-
-# Start PostgreSQL first (Docker or local)
-docker run --name voicerx-postgres \
-  -e POSTGRES_USER=voicerx \
-  -e POSTGRES_PASSWORD=voicerx123 \
-  -e POSTGRES_DB=voicerx \
-  -p 5432:5432 \
-  -d postgres:15
-
 npm run dev
 ```
 
-### Frontend
+Backend runs at: **http://localhost:5001**
+
+### Step 4: Run Frontend (Terminal 2)
+
+Open a NEW terminal:
 
 ```bash
 cd frontend-new
@@ -67,15 +100,14 @@ npm install
 npm run dev
 ```
 
-## Environment Variables
+Frontend runs at: **http://localhost:5173**
 
-Copy `.env.example` to `.env` and update:
+### Quick Reference
 
-```env
-DATABASE_URL=postgresql://voicerx:voicerx123@localhost:5432/voicerx
-JWT_SECRET=your-secret-key-change-in-production
-OPENAI_API_KEY=your-openai-api-key
-```
+| Terminal | Folder | Command | URL |
+|----------|--------|---------|-----|
+| 1 | backend | `npm run dev` | http://localhost:5001 |
+| 2 | frontend-new | `npm run dev` | http://localhost:5173 |
 
 ## Tech Stack
 
