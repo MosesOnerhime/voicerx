@@ -21,7 +21,7 @@ const Gendashboard = () => {
   const navigate = useNavigate(); 
   const dispatch = useDispatch();
   
-  const role = user?.role || 'user';
+  const role = user?.role?.toLowerCase() || 'user';
   const links = navConfig[role as keyof typeof navConfig] || [];
 
   const handleLogout = () => {
@@ -31,9 +31,9 @@ const Gendashboard = () => {
 
   return (
     <div className="flex h-screen bg-[#F8F9FC] font-subheading">
-      <aside className="w-64 bg-white border-r border-gray-200 flex flex-col">
+      <aside className="w-64 bg-[#29095F] border-r border-gray-200 flex flex-col">
         <div className="p-6">
-          <h2 className="font-heading text-2xl font-bold text-purple-700">HealthFlow</h2>
+          <h2 className="font-heading text-2xl font-bold text-purple-700">DrVoicerx</h2>
         </div>
 
         <nav className="flex-1 px-4 space-y-2 mt-4">

@@ -54,7 +54,7 @@ const AdminDashboard = () => {
 
   return (
    
-      <div className="space-y-8">
+      <div className="space-y-8 bg-tertiary font-subheading">
         {/* Welcome Header */}
         <div>
           <h1 className="text-3xl font-bold text-foreground">
@@ -170,7 +170,7 @@ const AdminDashboard = () => {
               title="Upload Staff"
               description="Import staff via CSV"
               icon={Users}
-              href="/staff/upload"
+              href="/staff/upload-staff"
             />
           </div>
         </div>
