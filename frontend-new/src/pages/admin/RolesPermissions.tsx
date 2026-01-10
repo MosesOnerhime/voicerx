@@ -1,7 +1,5 @@
-import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
-import { type RootState } from "../../store";
-import { Shield, Users, Plus, Edit, Trash2, Loader2 } from "lucide-react";
+import { Shield, Users, Plus, Edit, Trash2 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
 import { Badge } from "../../components/ui/badge";
@@ -13,7 +11,6 @@ import {
   TableHeader,
   TableRow,
 } from "../../components/ui/table";
-import { useToast } from "../../hooks/use-toast";
 
 interface Role {
   id: string;
@@ -23,53 +20,39 @@ interface Role {
   userCount: number;
 }
 
+const mockRoles: Role[] = [
+  {
+    id: "1",
+    name: "Administrator",
+    description: "Full system access with all permissions",
+    permissions: ["All Permissions"],
+    userCount: 2,
+  },
+  {
+    id: "2",
+    name: "Doctor",
+    description: "Access to patient records and medical functions",
+    permissions: ["View Patients", "Edit Medical Records", "Prescribe Medications"],
+    userCount: 12,
+  },
+  {
+    id: "3",
+    name: "Nurse",
+    description: "Access to patient care and monitoring",
+    permissions: ["View Patients", "Update Vitals", "Administer Medications"],
+    userCount: 25,
+  },
+  {
+    id: "4",
+    name: "Pharmacist",
+    description: "Manage medications and prescriptions",
+    permissions: ["View Prescriptions", "Dispense Medications", "Manage Inventory"],
+    userCount: 5,
+  },
+];
+
 const RolesPermissions = () => {
-  const { toast } = useToast();
-  const { token } = useSelector((state: RootState) => state.auth);
-  const [roles, setRoles] = useState<Role[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  // Fetch roles on mount
-  useEffect(() => {
-    const fetchRoles = async () => {
-      try {
-        const response = await fetch("/api/admin/roles", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setRoles(data.roles || []);
-        } else {
-          throw new Error("Failed to fetch roles");
-        }
-      } catch (error) {
-        console.error("Failed to fetch roles:", error);
-        toast({
-          title: "Error",
-          description: "Failed to load roles",
-          variant: "destructive",
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (token) {
-      fetchRoles();
-    }
-  }, [token]);
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
-  }
-
+    
   return (
    
       <div className="space-y-6">
@@ -111,7 +94,7 @@ const RolesPermissions = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {roles.map((role) => (
+                  {mockRoles.map((role) => (
                     <TableRow key={role.id}>
                       <TableCell className="font-medium">{role.name}</TableCell>
                       <TableCell className="text-muted-foreground max-w-xs">

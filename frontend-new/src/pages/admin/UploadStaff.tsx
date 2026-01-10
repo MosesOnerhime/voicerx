@@ -1,7 +1,5 @@
 import { useState, useCallback } from "react";
-import { Upload, FileSpreadsheet, CheckCircle, AlertCircle, X, Loader2 } from "lucide-react";
-import { useSelector } from "react-redux";
-import { type RootState } from "../../store";
+import { Upload, FileSpreadsheet, CheckCircle, AlertCircle, X } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
 import { useToast } from "../../hooks/use-toast";
@@ -11,61 +9,8 @@ interface ValidationError {
   message: string;
 }
 
-interface StaffMember {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  role: string;
-  specialization?: string;
-}
-
-// Parse CSV content into staff data array
-const parseCSV = (content: string): StaffMember[] => {
-  const lines = content.trim().split('\n');
-  if (lines.length < 2) return [];
-
-  // Get headers (first row)
-  const headers = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/["']/g, ''));
-
-  // Map header names to expected fields
-  const headerMap: Record<string, string> = {
-    'first_name': 'firstName',
-    'firstname': 'firstName',
-    'last_name': 'lastName',
-    'lastname': 'lastName',
-    'email': 'email',
-    'phone': 'phone',
-    'role': 'role',
-    'specialization': 'specialization',
-  };
-
-  const staff: StaffMember[] = [];
-
-  for (let i = 1; i < lines.length; i++) {
-    const values = lines[i].split(',').map(v => v.trim().replace(/["']/g, ''));
-    if (values.length < headers.length) continue;
-
-    const staffMember: Record<string, string> = {};
-    headers.forEach((header, index) => {
-      const mappedKey = headerMap[header] || header;
-      staffMember[mappedKey] = values[index] || '';
-    });
-
-    // Convert role to uppercase for backend
-    if (staffMember.role) {
-      staffMember.role = staffMember.role.toUpperCase();
-    }
-
-    staff.push(staffMember as unknown as StaffMember);
-  }
-
-  return staff;
-};
-
 const UploadStaff = () => {
   const { toast } = useToast();
-  const { token } = useSelector((state: RootState) => state.auth);
   const [isDragging, setIsDragging] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -114,78 +59,24 @@ const UploadStaff = () => {
     setIsUploading(true);
     setValidationErrors([]);
 
-    try {
-      // Read and parse the CSV file
-      const content = await file.text();
-      const staffData = parseCSV(content);
+    // Simulate upload and validation
+    await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      if (staffData.length === 0) {
-        toast({
-          title: "Invalid File",
-          description: "Could not parse any staff data from the file. Please check the format.",
-          variant: "destructive",
-        });
-        setIsUploading(false);
-        return;
-      }
-
-      // Call the backend API
-      const response = await fetch("/api/users/upload", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ staffData }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        // Handle validation errors from backend
-        if (data.validationErrors) {
-          const errors: ValidationError[] = data.validationErrors.map(
-            (err: { row: number; error: string }) => ({
-              row: err.row,
-              message: err.error,
-            })
-          );
-          setValidationErrors(errors);
-        } else if (data.existingEmails) {
-          toast({
-            title: "Duplicate Emails",
-            description: `These emails already exist: ${data.existingEmails.join(", ")}`,
-            variant: "destructive",
-          });
-        } else if (data.duplicates) {
-          toast({
-            title: "Duplicate Emails in File",
-            description: `Found duplicate emails: ${data.duplicates.join(", ")}`,
-            variant: "destructive",
-          });
-        } else {
-          throw new Error(data.error || "Upload failed");
-        }
-        setIsUploading(false);
-        return;
-      }
-
-      // Success
-      setUploadSuccess(true);
-      toast({
-        title: "Staff Uploaded Successfully",
-        description: `Created ${data.created?.length || 0} staff members. Temporary password: ${data.tempPassword || "Welcome@123"}`,
-      });
-    } catch (error) {
-      console.error("Upload error:", error);
-      toast({
-        title: "Upload Failed",
-        description: error instanceof Error ? error.message : "Failed to upload staff file",
-        variant: "destructive",
-      });
-    } finally {
+    // Mock validation - in real app, this would come from backend
+    const mockErrors: ValidationError[] = [];
+    
+    if (mockErrors.length > 0) {
+      setValidationErrors(mockErrors);
       setIsUploading(false);
+      return;
     }
+
+    setUploadSuccess(true);
+    setIsUploading(false);
+    toast({
+      title: "Staff Uploaded Successfully",
+      description: "Invitation emails with temporary passwords have been sent to all staff members.",
+    });
   };
 
   const removeFile = () => {
@@ -341,14 +232,7 @@ const UploadStaff = () => {
                 size="lg"
                 className="px-8"
               >
-                {isUploading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Uploading...
-                  </>
-                ) : (
-                  "Upload Staff"
-                )}
+                {isUploading ? "Uploading..." : "Upload Staff"}
               </Button>
             </div>
           </CardContent>

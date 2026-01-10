@@ -1,0 +1,15 @@
+{
+  "hash": "67cfd875",
+  "configHash": "69cf29c1",
+  "lockfileHash": "7f524690",
+  "browserHash": "b22cf4f7",
+  "optimized": {
+    "react/jsx-dev-runtime": {
+      "src": "../../node_modules/react/jsx-dev-runtime.js",
+      "file": "react_jsx-dev-runtime.js",
+      "fileHash": "7e0b5339",
+      "needsInterop": true
+    }
+  },
+  "chunks": {}
+}

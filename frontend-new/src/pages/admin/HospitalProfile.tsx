@@ -1,7 +1,5 @@
-import { useState, useEffect } from "react";
-import { Building2, Mail, Phone, MapPin, User, Loader2 } from "lucide-react";
-import { useSelector } from "react-redux";
-import { type RootState } from "../../store";
+import { useState } from "react";
+import { Building2, Mail, Phone, MapPin, User } from "lucide-react";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
@@ -12,93 +10,27 @@ import { useToast } from "../../hooks/use-toast";
 
 const HospitalProfile = () => {
   const { toast } = useToast();
-  const { token } = useSelector((state: RootState) => state.auth);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState({
-    hospitalName: "",
-    businessEmail: "",
-    phoneNumber: "",
-    address: "",
-    adminName: "",
-    adminEmail: "",
+    hospitalName: "City General Hospital",
+    businessEmail: "admin@citygeneral.com",
+    phoneNumber: "+1 (555) 123-4567",
+    address: "123 Healthcare Boulevard, Medical District, NY 10001",
+    adminName: "Dr. Sarah Johnson",
+    adminEmail: "sarah.johnson@citygeneral.com",
   });
-
-  // Fetch hospital profile on mount
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const response = await fetch("/api/admin/hospital-profile", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (response.ok) {
-          const data = await response.json();
-          setFormData(data);
-        }
-      } catch (error) {
-        console.error("Failed to fetch profile:", error);
-        toast({
-          title: "Error",
-          description: "Failed to load hospital profile",
-          variant: "destructive",
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (token) {
-      fetchProfile();
-    }
-  }, [token]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setSaving(true);
-
-    try {
-      const response = await fetch("/api/admin/hospital-profile", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (response.ok) {
-        toast({
-          title: "Profile Updated",
-          description: "Hospital profile has been saved successfully.",
-        });
-      } else {
-        throw new Error("Failed to save");
-      }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to save hospital profile",
-        variant: "destructive",
-      });
-    } finally {
-      setSaving(false);
-    }
+    toast({
+      title: "Profile Updated",
+      description: "Hospital profile has been saved successfully.",
+    });
   };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
-  }
 
   return (
  

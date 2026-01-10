@@ -1,7 +1,5 @@
-import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
-import { type RootState } from "../../store";
-import { FileText, Search, Filter, Calendar, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { FileText, Search, Filter, Calendar } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
@@ -21,7 +19,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../components/ui/select";
-import { useToast } from "../../hooks/use-toast";
 
 interface AuditLog {
   id: string;
@@ -33,53 +30,68 @@ interface AuditLog {
   ipAddress: string;
 }
 
+const mockLogs: AuditLog[] = [
+  {
+    id: "1",
+    timestamp: "2025-01-09 14:32:15",
+    user: "Dr. Sarah Johnson",
+    action: "Login",
+    resource: "Authentication",
+    status: "Success",
+    ipAddress: "192.168.1.105",
+  },
+  {
+    id: "2",
+    timestamp: "2025-01-09 14:28:42",
+    user: "Admin",
+    action: "Update Profile",
+    resource: "Hospital Profile",
+    status: "Success",
+    ipAddress: "192.168.1.100",
+  },
+  {
+    id: "3",
+    timestamp: "2025-01-09 14:15:33",
+    user: "Michael Chen",
+    action: "Upload Staff",
+    resource: "Staff Management",
+    status: "Success",
+    ipAddress: "192.168.1.110",
+  },
+  {
+    id: "4",
+    timestamp: "2025-01-09 13:58:21",
+    user: "Unknown",
+    action: "Login Attempt",
+    resource: "Authentication",
+    status: "Failed",
+    ipAddress: "203.45.67.89",
+  },
+  {
+    id: "5",
+    timestamp: "2025-01-09 13:45:10",
+    user: "Admin",
+    action: "Create Role",
+    resource: "Roles & Permissions",
+    status: "Success",
+    ipAddress: "192.168.1.100",
+  },
+  {
+    id: "6",
+    timestamp: "2025-01-09 12:30:55",
+    user: "Emily Davis",
+    action: "View Patient Record",
+    resource: "Patient Records",
+    status: "Success",
+    ipAddress: "192.168.1.115",
+  },
+];
+
 const AuditLogs = () => {
-  const { toast } = useToast();
-  const { token } = useSelector((state: RootState) => state.auth);
-  const [logs, setLogs] = useState<AuditLog[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
-  // Fetch audit logs on mount
-  useEffect(() => {
-    const fetchLogs = async () => {
-      try {
-        const params = new URLSearchParams();
-        if (searchQuery) params.append("search", searchQuery);
-        if (statusFilter !== "all") params.append("status", statusFilter);
-
-        const response = await fetch(`/api/admin/audit-logs?${params.toString()}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setLogs(data.logs || []);
-        } else {
-          throw new Error("Failed to fetch logs");
-        }
-      } catch (error) {
-        console.error("Failed to fetch audit logs:", error);
-        toast({
-          title: "Error",
-          description: "Failed to load audit logs",
-          variant: "destructive",
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (token) {
-      fetchLogs();
-    }
-  }, [token, searchQuery, statusFilter]);
-
-  // Filter logs locally for immediate feedback
-  const filteredLogs = logs.filter((log) => {
+  const filteredLogs = mockLogs.filter((log) => {
     const matchesSearch =
       log.user.toLowerCase().includes(searchQuery.toLowerCase()) ||
       log.action.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -88,15 +100,8 @@ const AuditLogs = () => {
     return matchesSearch && matchesStatus;
   });
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
-  }
-
   return (
+  
       <div className="space-y-6">
         {/* Header */}
         <div>

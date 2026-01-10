@@ -183,7 +183,6 @@ return (
                 appointment={selectedAppointment}
                 open={modalOpen}
                 onOpenChange={setModalOpen}
-                onSaved={fetchQueue}
             />
 
 
