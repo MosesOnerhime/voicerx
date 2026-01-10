@@ -256,81 +256,84 @@ export default function SignUp() {
             </div>
 
             {/* Section: Admin Info */}
-            <div className="space-y-4 pt-4">
-              <h3 className="text-sm uppercase tracking-wide text-purple-600 font-bold border-b border-gray-100 pb-2">
-                Admin Administrator
-              </h3>
+<div className="space-y-4 pt-4">
+  <h3 className="text-sm uppercase tracking-wide text-purple-600 font-bold border-b border-gray-100 pb-2 text-center">
+    ADMIN ADMINISTRATOR
+  </h3>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="md:col-span-2">
-                  <label htmlFor="adminFirstName" className={labelClass}>Admin First Name</label>
-                  <input
-                    id="adminFirstName" name="adminFirstName"
-                    required
-                    className={inputClass}
-                    placeholder="Dr. John Doe"
-                    value={formData.adminFirstName} onChange={handleChange}
-                  />
-                </div>
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    {/* First Name - Full Width on Mobile, 1 Col on MD */}
+    <div className="md:col-span-1">
+      <label htmlFor="adminFirstName" className={labelClass}>Admin First Name</label>
+      <input
+        id="adminFirstName" name="adminFirstName"
+        required
+        className={inputClass}
+        placeholder="Janet"
+        value={formData.adminFirstName} onChange={handleChange}
+      />
+    </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="md:col-span-2">
-                  <label htmlFor="adminLastName" className={labelClass}>Admin Last Name</label>
-                  <input
-                    id="adminLastName" name="adminLastName"
-                    required
-                    className={inputClass}
-                    placeholder="Dr. John Doe"
-                    value={formData.adminLastName} onChange={handleChange}
-                  />
-                </div>
+    {/* Last Name */}
+    <div className="md:col-span-1">
+      <label htmlFor="adminLastName" className={labelClass}>Admin Last Name</label>
+      <input
+        id="adminLastName" name="adminLastName"
+        required
+        className={inputClass}
+        placeholder="Abdullahi"
+        value={formData.adminLastName} onChange={handleChange}
+      />
+    </div>
 
-                <div className="md:col-span-2">
-                  <label htmlFor="adminEmail" className={labelClass}>Admin Email (Login ID)</label>
-                  <input
-                    id="adminEmail" name="adminEmail" type="email"
-                    required
-                    className={inputClass}
-                    placeholder="john@hospital.com"
-                    value={formData.adminEmail} onChange={handleChange}
-                  />
-                </div>
+    {/* Email - Full Width */}
+    <div className="md:col-span-2">
+      <label htmlFor="adminEmail" className={labelClass}>Admin Email (Login ID)</label>
+      <input
+        id="adminEmail" name="adminEmail" type="email"
+        required
+        className={inputClass}
+        placeholder="janet.abdullahi@hospital.com"
+        value={formData.adminEmail} onChange={handleChange}
+      />
+    </div>
 
-                <div className="relative">
-                  <label htmlFor="adminPassword" className={labelClass}>Password</label>
-                  <div className="relative">
-                    <input
-                      id="adminPassword" name="adminPassword"
-                      type={showPassword ? "text" : "password"}
-                      required minLength={8}
-                      className={inputClass}
-                      placeholder="••••••••"
-                      value={formData.adminPassword} onChange={handleChange}
-                    />
-                    <button
-                      type="button"
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-purple-600"
-                      onClick={() => setShowPassword(!showPassword)}
-                    >
-                      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                    </button>
-                  </div>
-                </div>
+    {/* Password */}
+    <div className="md:col-span-1">
+      <label htmlFor="adminPassword" className={labelClass}>Password</label>
+      <div className="relative">
+        <input
+          id="adminPassword" name="adminPassword"
+          type={showPassword ? "text" : "password"}
+          required minLength={8}
+          className={`${inputClass} pr-12`} // Added padding for the icon
+          placeholder="••••••••"
+          value={formData.adminPassword} onChange={handleChange}
+        />
+        <button
+          type="button"
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-purple-600 transition-colors"
+          onClick={() => setShowPassword(!showPassword)}
+        >
+          {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+        </button>
+      </div>
+    </div>
 
-                <div>
-                  <label htmlFor="confirmPassword" className={labelClass}>Confirm Password</label>
-                  <input
-                    id="confirmPassword" name="confirmPassword"
-                    type="password"
-                    required
-                    className={inputClass}
-                    placeholder="••••••••"
-                    value={formData.confirmPassword} onChange={handleChange}
-                  />
-                </div>
-              </div>
-              </div>
-            </div>
+    {/* Confirm Password */}
+    <div className="md:col-span-1">
+      <label htmlFor="confirmPassword" className={labelClass}>Confirm Password</label>
+      <input
+        id="confirmPassword" name="confirmPassword"
+        type="password"
+        required
+        className={inputClass}
+        placeholder="••••••••"
+        value={formData.confirmPassword} onChange={handleChange}
+      />
+    </div>
+  </div>
+</div>
 
             {/* Submit Button */}
             <button
