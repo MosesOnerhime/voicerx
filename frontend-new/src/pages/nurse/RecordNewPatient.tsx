@@ -1,5 +1,5 @@
 'use client'
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -48,6 +48,15 @@ export default function RecordNewPatient() {
   const [isProcessingVoice, setIsProcessingVoice] = useState(false);
   const [transcript, setTranscript] = useState<string | null>(null);
   const [confidence, setConfidence] = useState<number | null>(null);
+  const [aiEnabled, setAiEnabled] = useState<boolean | null>(null); // null = loading
+
+  // Check if AI features are available
+  useEffect(() => {
+    fetch('/api/voice/status')
+      .then(res => res.json())
+      .then(data => setAiEnabled(data.aiEnabled))
+      .catch(() => setAiEnabled(false));
+  }, []);
 
   const {
     isRecording,
@@ -230,7 +239,8 @@ export default function RecordNewPatient() {
         </div>
       </div>
 
-      {/* Voice Registration Section */}
+      {/* Voice Registration Section - Only show if AI is enabled */}
+      {aiEnabled === true && (
       <div className="bg-gradient-to-r from-primary/5 to-primary/10 p-4 sm:p-6 rounded-xl border border-primary/20 shadow-sm mb-6 sm:mb-8">
         <div className="flex items-start gap-4">
           <div className="flex-shrink-0 h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
@@ -345,6 +355,7 @@ export default function RecordNewPatient() {
           </div>
         </div>
       </div>
+      )}
 
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 sm:space-y-8">
         {/* Section 1: Basic Information */}

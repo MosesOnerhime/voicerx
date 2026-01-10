@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { type RootState } from "../store";
 import {
@@ -36,6 +36,15 @@ export function PatientIntakeModal({ appointment, open, onOpenChange, onVitalsSa
   const [transcript, setTranscript] = useState<string | null>(null);
   const [confidence, setConfidence] = useState<number | null>(null);
   const [usedVoice, setUsedVoice] = useState(false);
+  const [aiEnabled, setAiEnabled] = useState<boolean | null>(null);
+
+  // Check if AI features are available
+  useEffect(() => {
+    fetch('/api/voice/status')
+      .then(res => res.json())
+      .then(data => setAiEnabled(data.aiEnabled))
+      .catch(() => setAiEnabled(false));
+  }, []);
 
   // Real voice recording hook
   const {
@@ -356,7 +365,8 @@ export function PatientIntakeModal({ appointment, open, onOpenChange, onVitalsSa
             </div>
           </div>
 
-          {/* RIGHT SIDE: Voice Recording */}
+          {/* RIGHT SIDE: Voice Recording - Only show if AI is enabled */}
+          {aiEnabled === true ? (
           <div className="w-full lg:w-[300px] bg-slate-50 p-4 sm:p-6 flex flex-col items-center justify-center text-center">
             {isProcessing ? (
               <div className="space-y-4">
@@ -465,6 +475,21 @@ export function PatientIntakeModal({ appointment, open, onOpenChange, onVitalsSa
               </div>
             )}
           </div>
+          ) : (
+          <div className="w-full lg:w-[300px] bg-slate-50 p-4 sm:p-6 flex flex-col items-center justify-center text-center">
+            <div className="space-y-4">
+              <div className="h-20 w-20 sm:h-24 sm:w-24 rounded-full mx-auto flex items-center justify-center bg-muted">
+                <Mic className="h-6 w-6 sm:h-8 sm:w-8 text-muted-foreground" />
+              </div>
+              <div className="space-y-2">
+                <h3 className="font-bold text-base sm:text-lg text-muted-foreground">Voice AI Not Available</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground">
+                  Please enter vitals manually using the form on the left.
+                </p>
+              </div>
+            </div>
+          </div>
+          )}
         </div>
 
         <div className="p-3 sm:p-4 border-t bg-white flex flex-col sm:flex-row justify-end gap-2 sm:gap-3">

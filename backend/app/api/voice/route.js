@@ -14,11 +14,19 @@ import OpenAI from 'openai';
 let openai = null;
 function getOpenAI() {
   if (!openai) {
+    if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'your-openai-api-key') {
+      return null;
+    }
     openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
     });
   }
   return openai;
+}
+
+// Check if AI features are available
+function isAIEnabled() {
+  return process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== 'your-openai-api-key';
 }
 
 // AI extraction prompt for vitals
@@ -52,6 +60,18 @@ Temperature in Celsius. Weight in kg. Height in cm.`;
 // POST - Upload audio and process with AI
 export async function POST(request) {
   try {
+    // 0. CHECK IF AI IS ENABLED
+    if (!isAIEnabled()) {
+      return Response.json(
+        {
+          error: 'Voice AI feature is not configured',
+          message: 'OpenAI API key is not set. Please configure OPENAI_API_KEY to use voice features, or enter vitals manually instead.',
+          aiEnabled: false
+        },
+        { status: 503 }
+      );
+    }
+
     // 1. AUTHENTICATION
     const authHeader = request.headers.get('authorization');
     const cookieToken = request.cookies.get('auth-token')?.value;
