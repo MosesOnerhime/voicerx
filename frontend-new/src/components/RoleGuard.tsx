@@ -20,12 +20,17 @@ export const RoleGuard = ({ allowedRoles, children }: RoleGuardProps) => {
 
   // 2. If no user and no token, go to login
   if (!user && !token) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/signin" replace />;
   }
 
   // 3. If user exists but role is wrong
-  if (user && !allowedRoles.includes(user.role)) {
+  if (user) {
+    const normalizedUserRole = user.role.toLowerCase();
+    const isAuthorized = allowedRoles.some((role) => role.toLowerCase() === normalizedUserRole);
+
+    if (!isAuthorized) {
     return <Navigate to="/unauthorized" replace />; 
+    }
   }
 
   return children ? <>{children}</> : <Outlet />;

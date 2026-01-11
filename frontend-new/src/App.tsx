@@ -2,14 +2,13 @@
 import './App.css'
 import Gendashboard from './components/Gendashboard';
 import Register from './pages/Register'
-import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, Navigate, useNavigate } from 'react-router-dom';
 import { Toaster } from "./components/ui/overlays-and-feedback";
 import { TooltipProvider } from "./components/ui/data-display";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import NurseOverview from './pages/nurse/NurseOverview';
 import PatientsPage from './pages/nurse/PatientsPage';
-
-// import { RoleGuard } from './components/RoleGuard';
+import { Provider } from 'react-redux';
 import RecordNewPatient from './pages/nurse/RecordNewPatient';
 import SignUp from './pages/SignUp';
 import PharmacyDashboard from './pages/pharmacy/PharmacyOverview';
@@ -33,12 +32,15 @@ import Records from "./pages/doctor/Records";
 import AvailableDoctors from './pages/nurse/AvailableDoctors';
 import Index from './pages/Index';
 import { RoleGuard } from './components/RoleGuard';
+import { store } from './store';
+import NoAccess from './pages/NoAccess';
 
 const queryClient = new QueryClient();
 
 function App() {
 
   return(
+    <Provider store={store}>
     <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       {/* Our consolidated Toaster handles all feedback/alerts */}
@@ -101,6 +103,7 @@ function App() {
         <Route path="/hospital-profile" element={<Navigate to="/admin/hospital-profile" replace />} />
         <Route path="/staff/upload" element={<Navigate to="/admin/staff/upload-staff" replace />} />
         <Route path="/staff/list" element={<Navigate to="/admin/staff/staff-list" replace />} />
+        <Route path="/unauthorized" element={<NoAccess />} />
 
         <Route path="*" element={<NotFound />} />
 
@@ -108,6 +111,7 @@ function App() {
     </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
+  </Provider>
 
   )
 }
