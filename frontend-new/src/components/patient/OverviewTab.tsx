@@ -1,9 +1,10 @@
-import type { PatientRecord } from '../../services/types/db'; // Up to src, then types
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/layout-containers'; // Up to components, then ui
+import type { PatientApptRecord } from '../../services/types/db'; // Up to src, then types
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/layout-containers'; 
 import { User, Activity, FileText, Stethoscope } from 'lucide-react';
+import { calculateAge } from '../../lib/dateUtils';
 
 interface OverviewTabProps {
-  record: PatientRecord;
+  record: PatientApptRecord;
 }
 
 export function OverviewTab({ record }: OverviewTabProps) {
@@ -26,7 +27,7 @@ export function OverviewTab({ record }: OverviewTabProps) {
           </div>
           <div className="flex justify-between">
             <span className="text-sm text-muted-foreground">Age</span>
-            <span className="text-sm font-medium">{patient.} years</span>
+            <span className="text-sm font-medium">{calculateAge(patient.dateOfBirth)} years</span>
           </div>
           <div className="flex justify-between">
             <span className="text-sm text-muted-foreground">Gender</span>

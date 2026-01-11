@@ -1,4 +1,4 @@
-import { DoctorLayout } from '../../components/layout/DoctorLayout';
+
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/layout-containers';
 import { Button } from '../../components/ui/form-controls';
 import { Input } from '../../components/ui/form-controls';
@@ -7,10 +7,6 @@ import { User, Mail, Phone, Building, Stethoscope, Calendar, Shield } from 'luci
 
 export default function Profile() {
   return (
-    <DoctorLayout 
-      title="Profile" 
-      subtitle="Manage your account settings"
-    >
       <div className="max-w-2xl space-y-6 animate-fade-in">
         {/* Profile Header */}
         <Card className="shadow-card">
@@ -111,6 +107,5 @@ export default function Profile() {
           <Button>Save Changes</Button>
         </div>
       </div>
-    </DoctorLayout>
   );
 }

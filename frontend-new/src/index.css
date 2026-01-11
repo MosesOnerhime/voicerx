@@ -27,6 +27,10 @@
     --color-popover: #ffffff;
     --color-popover-foreground: #1a1a2e;
 
+    /* Gradient colors - #5918bb to #7f22fe */
+        --gradient-start: 262 79% 42%;
+        --gradient-end: 264 99% 56%;
+
     /* --- Mapping shadcn/ui Variables --- */
     /* This ensures border-border, bg-background, etc., work in v4 */
     --color-border: hsl(var(--border));

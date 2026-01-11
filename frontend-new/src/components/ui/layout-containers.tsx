@@ -4,6 +4,7 @@ import type { VariantProps, cva } from "class-variance-authority";
 import { PanelLeft, GripVertical } from "lucide-react";
 import * as SeparatorPrimitive from "@radix-ui/react-separator";
 import * as ScrollAreaPrimitive from "@radix-ui/react-scroll-area";
+//import { PanelGroup, Panel, PanelResizeHandle } from "react-resizable-panels";
 import * as ResizablePrimitive from "react-resizable-panels";
 import * as RechartsPrimitive from "recharts";
 
@@ -248,7 +249,8 @@ const ResizableHandle = ({ withHandle, className, ...props }: React.ComponentPro
 );
 
 // --- 7. CHART CONTAINER ---
-const ChartContainer = React.forwardRef<HTMLDivElement, React.ComponentProps<"div"> & { config: any; children: any }>(({ id, className, children, config, ...props }, ref) => {
+const ChartContainer = React.forwardRef<HTMLDivElement, React.ComponentProps<"div"> & { config: Record<string, { label: string; color?: string }>;
+children: React.ReactNode; }>(({ id, className, children, config, ...props }, ref) => {
   const chartId = `chart-${id || React.useId().replace(/:/g, "")}`;
   return (
     <div data-chart={chartId} ref={ref} className={cn("flex aspect-video justify-center text-xs", className)} {...props}>

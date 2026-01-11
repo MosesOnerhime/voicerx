@@ -1,7 +1,9 @@
 import { Heart } from "lucide-react";
 import { Button } from "./ui/button";
+import { useNavigate } from "react-router-dom";
 
 const Header = () => {
+  const navigate = useNavigate();
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
       <div className="container mx-auto px-6 h-16 flex items-center justify-between">
@@ -10,7 +12,7 @@ const Header = () => {
           <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
             <Heart className="w-4 h-4 text-primary-foreground" />
           </div>
-          <span className="text-xl font-bold text-foreground">HealthSync</span>
+          <span className="text-xl font-bold text-foreground">DrVoicerx</span>
         </div>
 
         {/* Navigation */}
@@ -28,10 +30,11 @@ const Header = () => {
 
         {/* Auth Buttons */}
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="sm" className="hidden sm:inline-flex">
+          <Button variant="ghost" size="sm" className="hidden sm:inline-flex"
+          onClick={() => navigate("/signin")}>
             Sign In
           </Button>
-          <Button size="sm">
+          <Button size="sm" onClick={() => navigate("/signup")}>
             Get Started
           </Button>
         </div>

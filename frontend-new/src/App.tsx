@@ -31,6 +31,7 @@ import Notifications from "./pages/doctor/Notifications";
 import Profile from "./pages/doctor/Profile";
 import Records from "./pages/doctor/Records";
 import AvailableDoctors from './pages/nurse/AvailableDoctors';
+import Index from './pages/Index';
 
 const queryClient = new QueryClient();
 
@@ -46,7 +47,8 @@ function App() {
       <Routes>
 
         {/*Public Routes*/}
-        <Route path="/" element={<Register />} />
+        <Route path="/" element={<Index />} />
+        <Route path="/signin" element={<Register />} />
         <Route path="/signup" element={<SignUp />} />
 
         {/* Protected Dashboard Routes */}

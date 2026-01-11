@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { DoctorLayout } from '../../components/layout/DoctorLayout';
 import { Card, CardContent } from '../../components/ui/layout-containers';
 import { Input } from '../../components/ui/form-controls';
 import { Button } from '../../components/ui/form-controls';
@@ -18,10 +17,6 @@ export default function Records() {
   );
 
   return (
-    <DoctorLayout 
-      title="Medical Records" 
-      subtitle="View and manage patient records"
-    >
       <div className="space-y-6 animate-fade-in">
         {/* Search and Filters */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
@@ -87,6 +82,5 @@ export default function Records() {
           </div>
         )}
       </div>
-    </DoctorLayout>
   );
 }

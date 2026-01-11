@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { DoctorLayout } from '../../components/layout/DoctorLayout';
 import { PatientTable } from '../../components/Doctordashboard/PatientTable';
 import { MOCK_DASHBOARD_DATA } from '../../data/mockData'; // Pointing to your mock data file
 import { Button } from '../../components/ui/form-controls';
@@ -27,10 +26,7 @@ export default function PatientList() {
   ];
 
   return (
-    <DoctorLayout 
-      title="Patient List" 
-      subtitle={`${filteredPatients.length} patients found`}
-    >
+   
       <div className="space-y-6 animate-fade-in">
         {/* Filters */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -65,6 +61,6 @@ export default function PatientList() {
         {/* Patient Table */}
         <PatientTable patients={filteredPatients} compact />
       </div>
-    </DoctorLayout>
+ 
   );
 }

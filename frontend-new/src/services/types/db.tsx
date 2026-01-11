@@ -103,7 +103,7 @@ export interface DiagnosisTreatment {
   doctorNotes: string;
 }
 
-export interface PatientRecord {
+export interface PatientApptRecord {
   patient: Patient;
   intakeNotes: IntakeNotes;
   diagnosisTreatment: DiagnosisTreatment;

@@ -5,7 +5,7 @@ import {
   Check, Trash2, ClipboardList, LayoutDashboard, 
   Users, UserCircle, Search 
 } from 'lucide-react';
-import { mockActivities } from '../../data/mockData';
+import { MOCK_DASHBOARD_DATA } from '../../data/mockData';
 
 // --- TYPES TO PREVENT ERRORS ---
 interface Activity {
@@ -18,7 +18,7 @@ interface Activity {
 
 export default function Notifications() {
   // Mapping incoming data to ensure properties like 'message' and 'content' don't crash the app
-  const notifications = (mockActivities as any[]).map(act => ({
+  const notifications = (MOCK_DASHBOARD_DATA as any[]).map(act => ({
     id: act.id || Math.random().toString(),
     type: act.type || 'update',
     message: act.message || act.content || act.description || "Notification received",

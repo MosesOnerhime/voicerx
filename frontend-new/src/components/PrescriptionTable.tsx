@@ -122,7 +122,7 @@ export default function PrescriptionTable({ statusFilter, title }: TableProps) {
                         <User className="text-purple-600" size={16} />
                       </div>
                       <div>
-                        <div className="font-medium text-gray-900">{prescription.patient_name}</div>
+                        <div className="font-medium text-gray-900">{prescription.patientName}</div>
                         <div className="text-xs text-gray-500">{prescription.patient_id}</div>
                       </div>
                     </div>
@@ -130,7 +130,7 @@ export default function PrescriptionTable({ statusFilter, title }: TableProps) {
                   <td className="px-6 py-4 text-sm">
                     <div className="flex items-center gap-2">
                       <Stethoscope size={14} className="text-gray-400" />
-                      {prescription.prescribed_by}
+                      {prescription.prescribedBy}
                     </div>
                   </td>
                   <td className="px-6 py-4">
@@ -143,11 +143,11 @@ export default function PrescriptionTable({ statusFilter, title }: TableProps) {
                       {prescription.status.toUpperCase()}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-xs text-gray-600">{formatDate(prescription.date_issued)}</td>
+                  <td className="px-6 py-4 text-xs text-gray-600">{formatDate(prescription.dateIssued)}</td>
                   <td className="px-6 py-4 text-right">
                     {prescription.status === "pending" && (
                       <button
-                        onClick={(e) => { e.stopPropagation(); handleDispense(prescription.id); }}
+                        onClick={(e) => { e.stopPropagation(); handleDispense(Number(prescription.id)); }}
                         className="bg-blue-600 text-white px-3 py-1.5 rounded-md text-xs hover:bg-blue-700 transition-colors"
                       >
                         Dispense
@@ -174,7 +174,7 @@ export default function PrescriptionTable({ statusFilter, title }: TableProps) {
               {/* Patient Info Section */}
               <div className="mb-6 bg-gray-50 p-4 rounded-lg">
                 <p className="text-xs font-bold text-gray-400 uppercase mb-2">Patient</p>
-                <p className="font-bold text-lg">{selectedPrescription.patient_name}</p>
+                <p className="font-bold text-lg">{selectedPrescription.patientName}</p>
                 <p className="text-sm text-gray-600">ID: {selectedPrescription.patient_id}</p>
               </div>
 
@@ -186,7 +186,7 @@ export default function PrescriptionTable({ statusFilter, title }: TableProps) {
                     <div key={idx} className="border p-4 rounded-lg flex gap-4">
                       <div className="bg-blue-50 p-2 rounded-lg h-fit"><Pill className="text-blue-600" size={20} /></div>
                       <div>
-                        <p className="font-bold">{med.medication_name}</p>
+                        <p className="font-bold">{med.medicationName}</p>
                         <p className="text-sm text-gray-600">{med.dosage} — {med.quantity}</p>
                         {med.instructions && <p className="mt-2 text-sm bg-blue-50 p-2 rounded text-blue-800">{med.instructions}</p>}
                       </div>
@@ -199,7 +199,7 @@ export default function PrescriptionTable({ statusFilter, title }: TableProps) {
               {selectedPrescription.status === "pending" && (
                 <div className="flex gap-3 pt-4 border-t">
                   <button 
-                    onClick={() => handleDispense(selectedPrescription.id)}
+                    onClick={() => handleDispense(Number(selectedPrescription.id))}
                     className="flex-1 bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 flex items-center justify-center gap-2"
                   >
                     <CheckCircle2 size={20} /> Mark as Dispensed

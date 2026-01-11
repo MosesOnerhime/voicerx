@@ -14,13 +14,13 @@ import {
 import { toast } from "../../hooks/use-toast";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
-import { Search, Filter, RefreshCw, UserPlus, Bell, Users } from "lucide-react";
+import { Search, Filter, RefreshCw, UserPlus, Users } from "lucide-react";
 
 //  local components
 import { QueueStats } from "../../components/QueueStats";
 import { PatientCard } from "../../components/PatientCard";
 import { PatientIntakeModal } from "../../components/PatientIntakeModal";
-import  RecordNewPatient  from "./RecordNewPatient";
+//import  RecordNewPatient  from "./RecordNewPatient";
 import { DoctorAssignmentDialog } from "../../components/DoctorAssignmentDialog";
 
 // Assuming you fetch this from your backend
@@ -38,7 +38,7 @@ export default function NurseOverview() {
     // UI State
     const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
     const [modalOpen, setModalOpen] = useState(false);
-    const [newPatientOpen, setNewPatientOpen] = useState(false);
+    //const [newPatientOpen, setNewPatientOpen] = useState(false);
     const [doctorDialogOpen, setDoctorDialogOpen] = useState(false);
     const [showPopUp, setShowPopUp] = useState(false);
 

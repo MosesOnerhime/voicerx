@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { DoctorLayout } from '../../components/layout/DoctorLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/layout-containers';
 import { Button } from '../../components/ui/form-controls';
 import { Alert, AlertDescription, AlertTitle } from '../../components/ui/overlays-and-feedback';
@@ -31,35 +30,36 @@ export default function ReviewApproval() {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [isApproved, setIsApproved] = useState(false);
 
-  const record = patientId ? MOCK_DASHBOARD_DATA[patientId] : null;
-  const formData = location.state?.formData || record?.diagnosisTreatment;
+  const record = patientId 
+    ? MOCK_DASHBOARD_DATA.find(item => item.patient.id === patientId) 
+    : null;
+  const formData = location.state?.formData || (record as any)?.diagnosisTreatment;
 
   if (!record) {
     return (
-      <DoctorLayout title="Patient Not Found">
+      
         <div className="flex flex-col items-center justify-center py-12">
           <p className="text-muted-foreground">Patient record not found.</p>
           <Button variant="outline" className="mt-4" onClick={() => navigate('/doctor/patients')}>
             Back to Patients
           </Button>
         </div>
-      </DoctorLayout>
+     
     );
   }
 
-  const { patient } = record;
+  const { patient, visitDate } = record;
+  // FIX 2: Handle names based on your interface (firstName + lastName)
+  const fullName = `${patient.firstName} ${patient.lastName}`;
 
   const handleApprove = () => {
     setShowConfirmDialog(false);
     setIsApproved(true);
+    //api call to change appointment to approved
   };
 
   if (isApproved) {
     return (
-      <DoctorLayout 
-        title="Record Approved" 
-        subtitle={patient.name}
-      >
         <div className="max-w-2xl mx-auto space-y-6 animate-fade-in">
           {/* Success Banner */}
           <Alert className="border-status-approved bg-status-approved-bg">
@@ -88,7 +88,7 @@ export default function ReviewApproval() {
                   <div className="grid gap-3 text-sm">
                     <div className="flex justify-between py-2 border-b border-border">
                       <span className="text-muted-foreground">Patient Name</span>
-                      <span className="font-medium">{patient.name}</span>
+                      <span className="font-medium">{fullName}</span>
                     </div>
                     <div className="flex justify-between py-2 border-b border-border">
                       <span className="text-muted-foreground">Patient ID</span>
@@ -118,15 +118,10 @@ export default function ReviewApproval() {
             </Button>
           </div>
         </div>
-      </DoctorLayout>
     );
   }
 
   return (
-    <DoctorLayout 
-      title="Review & Approval" 
-      subtitle={patient.name}
-    >
       <div className="max-w-3xl mx-auto space-y-6 animate-fade-in">
         {/* Back Button */}
         <Button 
@@ -159,7 +154,7 @@ export default function ReviewApproval() {
             <div className="grid gap-3 sm:grid-cols-3">
               <div className="rounded-lg bg-muted/50 p-3">
                 <p className="text-xs text-muted-foreground">Name</p>
-                <p className="mt-1 font-medium">{patient.name}</p>
+                <p className="mt-1 font-medium">{fullName}</p>
               </div>
               <div className="rounded-lg bg-muted/50 p-3">
                 <p className="text-xs text-muted-foreground">Patient ID</p>
@@ -167,7 +162,7 @@ export default function ReviewApproval() {
               </div>
               <div className="rounded-lg bg-muted/50 p-3">
                 <p className="text-xs text-muted-foreground">Visit Date</p>
-                <p className="mt-1 font-medium">{patient.visitDate}</p>
+                <p className="mt-1 font-medium">{visitDate}</p>
               </div>
             </div>
           </CardContent>
@@ -277,7 +272,7 @@ export default function ReviewApproval() {
             <DialogHeader>
               <DialogTitle>Confirm Approval</DialogTitle>
               <DialogDescription>
-                You are about to approve the medical record for <strong>{patient.name}</strong>. 
+                You are about to approve the medical record for <strong>{patient.firstName}</strong>. 
                 This action will finalize the record and make it part of the patient's permanent medical history.
               </DialogDescription>
             </DialogHeader>
@@ -295,6 +290,6 @@ export default function ReviewApproval() {
           </DialogContent>
         </Dialog>
       </div>
-    </DoctorLayout>
+   
   );
 }

@@ -12,7 +12,7 @@ import * as SliderPrimitive from "@radix-ui/react-slider";
 import * as TogglePrimitive from "@radix-ui/react-toggle";
 import * as ToggleGroupPrimitive from "@radix-ui/react-toggle-group";
 import { DayPicker } from "react-day-picker";
-import { Controller, ControllerProps, FieldPath, FieldValues, FormProvider, useFormContext } from "react-hook-form";
+import { Controller, type ControllerProps, type FieldPath, type FieldValues, FormProvider, useFormContext } from "react-hook-form";
 
 import { cn } from "../../lib/utils";
 

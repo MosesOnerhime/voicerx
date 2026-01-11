@@ -1,8 +1,7 @@
 
 import { 
   Users, Clock, CheckCircle, AlertCircle, 
-  Search, Bell, LayoutDashboard, FileText, 
-  ClipboardList, UserCircle, Eye, ChevronRight
+  Search, Bell, FileText, Eye,
 } from 'lucide-react';
 import { MOCK_DASHBOARD_DATA as mock } from '../../data/mockData';
 

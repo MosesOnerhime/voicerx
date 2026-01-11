@@ -3,6 +3,7 @@ import { StatusBadge } from '../ui/data-display'; // Up one level to components,
 import { Button } from '../ui/button'; // Up one level to components, then into ui
 import { Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { calculateAge } from '../../lib/dateUtils';
 
 interface PatientTableProps {
   patients: PatientAppt[];
@@ -43,22 +44,22 @@ export function PatientTable({ patients, compact = false }: PatientTableProps) {
           <tbody className="divide-y divide-border">
             {patients.map((patient) => (
               <tr 
-                key={patient.id} 
+                key={patient.patient.id} 
                 className="transition-colors hover:bg-muted/20"
               >
                 <td className="whitespace-nowrap px-5 py-4">
                   <div className="flex items-center gap-3">
                     <div className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary text-sm font-medium text-secondary-foreground">
-                      {patient.name.split(' ').map(n => n[0]).join('')}
+                      {patient.patient.firstName.split(' ').map(n => n[0]).join('')}
                     </div>
                     <div>
-                      <p className="font-medium text-foreground">{patient.name}</p>
-                      <p className="text-xs text-muted-foreground">{patient.age} yrs, {patient.gender}</p>
+                      <p className="font-medium text-foreground">{patient.patient.firstName}</p>
+                      <p className="text-xs text-muted-foreground">{calculateAge(patient.patient.dateOfBirth)} yrs, {patient.patient.gender}</p>
                     </div>
                   </div>
                 </td>
                 <td className="whitespace-nowrap px-5 py-4 text-sm text-muted-foreground">
-                  {patient.id}
+                  {patient.patient.id}
                 </td>
                 <td className="whitespace-nowrap px-5 py-4 text-sm text-muted-foreground">
                   {patient.lastUpdated}
@@ -70,7 +71,7 @@ export function PatientTable({ patients, compact = false }: PatientTableProps) {
                   <Button 
                     variant="outline" 
                     size="sm"
-                    onClick={() => navigate(`/doctor/patient/${patient.id}`)}
+                    onClick={() => navigate(`/doctor/patient/${patient.patient.id}`)}
                     className="gap-1.5"
                   >
                     <Eye className="h-4 w-4" />
