@@ -1,0 +1,58 @@
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15
+    container_name: voicerx-postgres
+    environment:
+      POSTGRES_USER: voicerx
+      POSTGRES_PASSWORD: voicerx123
+      POSTGRES_DB: voicerx
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U voicerx -d voicerx"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Backend API (Next.js)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: voicerx-backend
+    ports:
+      - "5001:5001"
+    environment:
+      DATABASE_URL: postgresql://voicerx:voicerx123@postgres:5432/voicerx
+      JWT_SECRET: your-secret-key-change-in-production
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+      - /app/.next
+    command: sh -c "npx prisma migrate deploy && npm run dev"
+
+  # Frontend (React + Vite)
+  frontend:
+    build:
+      context: ./frontend-new
+      dockerfile: Dockerfile
+    container_name: voicerx-frontend
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_URL: http://localhost:5001/api
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend-new:/app
+      - /app/node_modules
+
+volumes:
+  postgres_data:
