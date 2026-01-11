@@ -7,7 +7,7 @@ export interface RegisterFormValues extends LoginFormValues {
 }
 
 const api = axios.create({
-  baseURL: '/api',
+baseURL: '/api',
   headers: {
     'Content-Type': 'application/json',
   },

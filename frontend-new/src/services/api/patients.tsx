@@ -26,6 +26,14 @@ export const patientApi = {
     return response.data;
   },
 
-  //edit a patient info
-
+  // Edit a patient info**
+  update: async (id: string, payload: Partial<Patient>, token: string) => {
+    const response = await axios.patch(`${API_URL}/patients/${id}`, payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+    });
+    return response.data;
+  },
 };

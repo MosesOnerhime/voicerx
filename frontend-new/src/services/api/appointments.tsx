@@ -4,19 +4,18 @@ import { type Appointment } from '../types/db';
 const API_URL = '/api';
 
 export const appointmentApi = {
-  getNurseQueue: async (token: string) => {
-    // 1. Fetch all appointments
-    const response = await axios.get<Appointment[]>(`${API_URL}/appointments`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+getNurseQueue: async (token: string) => {
+  const response = await axios.get(`${API_URL}/appointments`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
 
-
-    // 2. Filter logic (if backend sends everything)
-    const hiddenStatuses = ['COMPLETED', 'CANCELLED'];
-
-    return response.data.filter(apt =>
-      !hiddenStatuses.includes(apt.status)
-    );
+  const appointmentsArray = response.data.appointments || [];
+  
+  const hiddenStatuses = ['COMPLETED', 'CANCELLED'];
+  return appointmentsArray.filter((apt: any) => {
+    const status = apt.status?.toUpperCase(); 
+    return !hiddenStatuses.includes(status);
+  });
   },
   // Create a new appointment entry in the database
   create: async (payload: any, token: string) => {

@@ -63,7 +63,7 @@ const Gendashboard = () => {
 
         <nav className="flex-1 px-4 space-y-2 mt-4 overflow-y-auto">
           {links.map((link) => {
-            if (link.children) {
+            if ('children' in link && link.children) {
               return <NavGroup key={link.name} item={link} onNavigate={closeSidebar} />;
             }
 

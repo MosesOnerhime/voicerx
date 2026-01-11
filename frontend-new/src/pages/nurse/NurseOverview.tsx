@@ -53,7 +53,7 @@ export default function NurseOverview() {
                 NORMAL: 1
                 };
 
-                const sorted = data.sort((a, b) => {
+                const sorted = data.sort((a: Appointment, b: Appointment) => {
                 // Use the exact property name from your DB types
                 return priorityOrder[b.priority] - priorityOrder[a.priority];
                 });

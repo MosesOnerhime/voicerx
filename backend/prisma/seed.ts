@@ -1,4 +1,4 @@
-import { PrismaClient } from '../generated/prisma/client';
+import { PrismaClient, BloodType, Genotype, Gender, UserRole, PatientStatus } from '../generated/prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
 import * as bcrypt from 'bcryptjs';
@@ -39,7 +39,7 @@ async function main() {
       firstName: 'Admin',
       lastName: 'User',
       phone: '+234 800 000 0010',
-      role: 'ADMIN',
+      role: UserRole.ADMIN,
       hospitalId: hospital.id,
       isActive: true,
     },
@@ -56,7 +56,7 @@ async function main() {
       firstName: 'Robert',
       lastName: 'Jones',
       phone: '+234 800 000 0011',
-      role: 'NURSE',
+      role: UserRole.NURSE,
       hospitalId: hospital.id,
       isActive: true,
     },
@@ -73,7 +73,7 @@ async function main() {
       firstName: 'Sarah',
       lastName: 'Chen',
       phone: '+234 800 000 0012',
-      role: 'DOCTOR',
+      role: UserRole.DOCTOR,
       hospitalId: hospital.id,
       isActive: true,
     },
@@ -90,7 +90,7 @@ async function main() {
       firstName: 'Mike',
       lastName: 'Wilson',
       phone: '+234 800 000 0013',
-      role: 'PHARMACIST',
+      role: UserRole.PHARMACIST,
       hospitalId: hospital.id,
       isActive: true,
     },
@@ -107,7 +107,7 @@ async function main() {
       firstName: 'Jane',
       lastName: 'Doe',
       phone: '+234 800 000 0014',
-      role: 'RECEPTIONIST',
+      role: UserRole.RECEPTIONIST,
       hospitalId: hospital.id,
       isActive: true,
     },
@@ -123,18 +123,18 @@ async function main() {
       firstName: 'John',
       lastName: 'Smith',
       dateOfBirth: new Date('1990-05-15'),
-      gender: 'MALE',
+      gender: Gender.MALE,
       phoneNumber: '+234 801 234 5678',
       email: 'john.smith@email.com',
       address: '456 Patient Street, Lagos',
-      bloodType: 'O_POSITIVE',
-      genotype: 'AA',
+      bloodType: BloodType.O_POSITIVE,
+      genotype: Genotype.AA,
       emergencyContactName: 'Mary Smith',
       emergencyContactPhone: '+234 802 345 6789',
       emergencyContactRelationship: 'SPOUSE',
       hospitalId: hospital.id,
       registeredBy: nurse.id,
-      status: 'ACTIVE',
+      status: PatientStatus.ACTIVE,
     },
   });
   console.log('Created patient:', patient.firstName, patient.lastName);

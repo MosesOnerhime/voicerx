@@ -1,0 +1,21 @@
+name: Main Branch Protection
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  check-source-branch:
+    name: Verify PR is from E2E-test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check source branch
+        run: |
+          echo "PR is from branch: ${{ github.head_ref }}"
+          if [[ "${{ github.head_ref }}" != "E2E-test" ]]; then
+            echo "Error: PRs to main must come from E2E-test branch only!"
+            echo "Current source branch: ${{ github.head_ref }}"
+            exit 1
+          fi
+          echo "Source branch is E2E-test. Allowed to proceed."
