@@ -33,9 +33,9 @@ export const navConfig = {
     { name: 'System Settings', path: '/admin/settings', icon: Settings }
   ],
   nurse: [
+    { name: 'Dashboard', path: '/nurse/dashboard', icon: LayoutDashboard },
     { name: 'Patient Records', path: '/nurse/patients', icon: FileText },
-    { name: 'Appointments', path: '/nurse/appointments', icon: Calendar },
-    { name: 'Vitals Entry', path: '/nurse/vitals', icon: Activity }
+    { name: 'Register Patient', path: '/nurse/register-patient', icon: UserPlus }
   ],
   doctor: [
     { name: 'Patient Queue', path: '/doctor/queue', icon: ClipboardList },
@@ -43,8 +43,8 @@ export const navConfig = {
     { name: 'Status', path: '/doctor/status', icon: UserCheck }
   ],
   pharmacist: [
-    { name: 'Dashboard', path: '/pharmacist/dashboard', icon: LayoutDashboard },
-    { name: 'Pending', path: '/pharmacist/pending', icon: Clock },
-    { name: 'History', path: '/pharmacist/dispensed', icon: CheckCircle2 }
+    { name: 'Dashboard', path: '/pharmacy/dashboard', icon: LayoutDashboard },
+    { name: 'Pending', path: '/pharmacy/pending', icon: Clock },
+    { name: 'Dispensed', path: '/pharmacy/dispensed', icon: CheckCircle2 }
   ]
 };

@@ -2,7 +2,7 @@
 import './App.css'
 import Gendashboard from './components/Gendashboard';
 import Register from './pages/Register'
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
 import NurseOverview from './pages/nurse/NurseOverview';
 import PatientsPage from './pages/nurse/PatientsPage';
 // import { RoleGuard } from './components/RoleGuard';
@@ -55,6 +55,12 @@ function App() {
           <Route path="/pharmacy/dispensed" element={<PharmacyDispensed />} />
 
         </Route>
+
+        {/* Redirects for old paths */}
+        <Route path="/hospital-profile" element={<Navigate to="/admin/hospital-profile" replace />} />
+        <Route path="/staff/upload" element={<Navigate to="/admin/staff/upload-staff" replace />} />
+        <Route path="/staff/list" element={<Navigate to="/admin/staff/staff-list" replace />} />
+
         <Route path="*" element={<NotFound />} />
 
       </Routes>

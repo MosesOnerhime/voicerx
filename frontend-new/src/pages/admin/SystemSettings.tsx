@@ -11,17 +11,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../components/ui/select";
+import { PageHeader } from "../../components/ui/PageHeader";
 
 const SystemSettings = () => {
   return (
       <div className="space-y-6 max-w-3xl">
-        {/* Header */}
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">System Settings</h1>
-          <p className="text-muted-foreground mt-1">
-            Configure your healthcare management system
-          </p>
-        </div>
+        <PageHeader
+          title="System Settings"
+          description="Configure your healthcare management system"
+          breadcrumbs={[{ label: "System Settings" }]}
+          backHref="/admin/dashboard"
+        />
 
         {/* Notifications Settings */}
         <Card className="shadow-card">

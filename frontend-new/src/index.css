@@ -1,11 +1,31 @@
 @import "tailwindcss";
 
 @theme {
-    /* --- Brand Colors --- */
-    --color-primary: #442E5C;
-    --color-secondary: #d9d9d9;
-    --color-tertiary: #f2f2f2;
-    --color-sidebar: #390C87;
+    /* Define Colors */
+    --color-primary: #7c3aed;
+    --color-primary-foreground: #ffffff;
+    --color-secondary: #f4f4f5;
+    --color-secondary-foreground: #27272a;
+    --color-tertiary: #f8f9fc;
+    --color-background: #fafafa;
+    --color-foreground: #1a1a2e;
+    --color-card: #ffffff;
+    --color-card-foreground: #1a1a2e;
+    --color-muted: #f1f0f4;
+    --color-muted-foreground: #6b7280;
+    --color-border: #e4e4e7;
+    --color-input: #e4e4e7;
+    --color-ring: #7c3aed;
+    --color-success: #22c55e;
+    --color-success-foreground: #ffffff;
+    --color-warning: #f59e0b;
+    --color-warning-foreground: #ffffff;
+    --color-destructive: #ef4444;
+    --color-destructive-foreground: #ffffff;
+    --color-accent: #f3e8ff;
+    --color-accent-foreground: #6d28d9;
+    --color-popover: #ffffff;
+    --color-popover-foreground: #1a1a2e;
 
     /* --- Mapping shadcn/ui Variables --- */
     /* This ensures border-border, bg-background, etc., work in v4 */
@@ -25,8 +45,10 @@
     --font-heading: "Quicksand", sans-serif;
     --font-subheading: "Manrope", sans-serif;
 
-    /* --- Border Radius --- */
-    --radius-xl: var(--radius);
+    /* Border radius */
+    --radius-sm: 0.5rem;
+    --radius-md: 0.75rem;
+    --radius-lg: 1rem;
 }
 
 @layer base {
@@ -61,8 +83,7 @@
 
 @layer base {
     * {
-        /* This fix resolves the 'unknown utility border-border' error */
-        border-color: hsl(var(--border));
+        border-color: var(--color-border);
     }
 
     body {

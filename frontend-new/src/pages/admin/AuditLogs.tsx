@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FileText, Search, Filter, Calendar } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
+import { PageHeader } from "../../components/ui/PageHeader";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Badge } from "../../components/ui/badge";
@@ -101,15 +102,13 @@ const AuditLogs = () => {
   });
 
   return (
-  
       <div className="space-y-6">
-        {/* Header */}
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Audit Logs</h1>
-          <p className="text-muted-foreground mt-1">
-            Track and monitor all system activities
-          </p>
-        </div>
+        <PageHeader
+          title="Audit Logs"
+          description="Track and monitor all system activities"
+          breadcrumbs={[{ label: "Audit Logs" }]}
+          backHref="/admin/dashboard"
+        />
 
         {/* Logs Card */}
         <Card className="shadow-card">

@@ -3,19 +3,86 @@ import { Upload, FileSpreadsheet, CheckCircle, AlertCircle, X } from "lucide-rea
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
 import { useToast } from "../../hooks/use-toast";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store";
+import { PageHeader } from "../../components/ui/PageHeader";
 
 interface ValidationError {
   row: number;
   message: string;
 }
 
+interface StaffData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  role: string;
+  specialization?: string;
+}
+
+// Parse CSV file content
+const parseCSV = (content: string): StaffData[] => {
+  const lines = content.trim().split('\n');
+  if (lines.length < 2) return [];
+
+  // Get headers and normalize them
+  const headers = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/['"]/g, ''));
+
+  // Map header names to expected fields
+  const headerMap: Record<string, string> = {
+    'first_name': 'firstName',
+    'firstname': 'firstName',
+    'first name': 'firstName',
+    'last_name': 'lastName',
+    'lastname': 'lastName',
+    'last name': 'lastName',
+    'email': 'email',
+    'phone': 'phone',
+    'role': 'role',
+    'specialization': 'specialization',
+  };
+
+  const staffData: StaffData[] = [];
+
+  for (let i = 1; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line) continue;
+
+    const values = line.split(',').map(v => v.trim().replace(/['"]/g, ''));
+    const staff: Record<string, string> = {};
+
+    headers.forEach((header, index) => {
+      const fieldName = headerMap[header] || header;
+      if (values[index]) {
+        staff[fieldName] = values[index];
+      }
+    });
+
+    // Normalize role to uppercase
+    if (staff.role) {
+      staff.role = staff.role.toUpperCase();
+      // Handle common role variations
+      if (staff.role === 'DR' || staff.role === 'DOC') staff.role = 'DOCTOR';
+      if (staff.role === 'RN') staff.role = 'NURSE';
+      if (staff.role === 'PHARM') staff.role = 'PHARMACIST';
+    }
+
+    staffData.push(staff as unknown as StaffData);
+  }
+
+  return staffData;
+};
+
 const UploadStaff = () => {
   const { toast } = useToast();
+  const token = useSelector((state: RootState) => state.auth.token);
   const [isDragging, setIsDragging] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadSuccess, setUploadSuccess] = useState(false);
   const [validationErrors, setValidationErrors] = useState<ValidationError[]>([]);
+  const [createdCount, setCreatedCount] = useState(0);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -58,25 +125,86 @@ const UploadStaff = () => {
 
     setIsUploading(true);
     setValidationErrors([]);
+    setUploadSuccess(false);
 
-    // Simulate upload and validation
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    try {
+      // Read and parse the CSV file
+      const content = await file.text();
+      const staffData = parseCSV(content);
 
-    // Mock validation - in real app, this would come from backend
-    const mockErrors: ValidationError[] = [];
-    
-    if (mockErrors.length > 0) {
-      setValidationErrors(mockErrors);
+      if (staffData.length === 0) {
+        toast({
+          title: "No Data Found",
+          description: "The file appears to be empty or has no valid data rows.",
+          variant: "destructive",
+        });
+        setIsUploading(false);
+        return;
+      }
+
+      // Call the backend API
+      const response = await fetch('/api/users/upload', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ staffData }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        // Handle validation errors from backend
+        if (result.validationErrors) {
+          setValidationErrors(
+            result.validationErrors.map((e: { row: number; error: string }) => ({
+              row: e.row,
+              message: e.error,
+            }))
+          );
+        } else if (result.existingEmails) {
+          setValidationErrors(
+            result.existingEmails.map((email: string, i: number) => ({
+              row: i + 1,
+              message: `Email already exists: ${email}`,
+            }))
+          );
+        } else if (result.duplicates) {
+          setValidationErrors(
+            result.duplicates.map((email: string, i: number) => ({
+              row: i + 1,
+              message: `Duplicate email in file: ${email}`,
+            }))
+          );
+        } else {
+          toast({
+            title: "Upload Failed",
+            description: result.error || "An error occurred during upload.",
+            variant: "destructive",
+          });
+        }
+        setIsUploading(false);
+        return;
+      }
+
+      // Success
+      setCreatedCount(result.created?.length || 0);
+      setUploadSuccess(true);
+      toast({
+        title: "Staff Uploaded Successfully",
+        description: `${result.created?.length || 0} staff members created. Temporary password: ${result.tempPassword}`,
+      });
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast({
+        title: "Upload Failed",
+        description: "Failed to upload staff. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
       setIsUploading(false);
-      return;
     }
-
-    setUploadSuccess(true);
-    setIsUploading(false);
-    toast({
-      title: "Staff Uploaded Successfully",
-      description: "Invitation emails with temporary passwords have been sent to all staff members.",
-    });
   };
 
   const removeFile = () => {
@@ -86,15 +214,16 @@ const UploadStaff = () => {
   };
 
   return (
-
       <div className="space-y-6 max-w-3xl">
-        {/* Header */}
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Upload Staff</h1>
-          <p className="text-muted-foreground mt-1">
-            Import staff members from a CSV or Excel file
-          </p>
-        </div>
+        <PageHeader
+          title="Upload Staff"
+          description="Import staff members from a CSV or Excel file"
+          breadcrumbs={[
+            { label: "Staff Management", href: "/admin/staff/staff-list" },
+            { label: "Upload Staff" },
+          ]}
+          backHref="/admin/dashboard"
+        />
 
         {/* Upload Card */}
         <Card className="shadow-card">
@@ -219,7 +348,8 @@ const UploadStaff = () => {
                   <h4 className="font-medium">Upload Successful</h4>
                 </div>
                 <p className="text-sm text-success mt-1">
-                  Invitation emails with temporary passwords have been sent to all staff members.
+                  Successfully created {createdCount} staff member{createdCount !== 1 ? 's' : ''}.
+                  Temporary password: <strong>Welcome@123</strong>
                 </p>
               </div>
             )}

@@ -1,0 +1,11 @@
+first_name,last_name,email,phone,role,specialization
+John,Smith,john.smith@testhospital.com,+2348012345001,Doctor,General Practice
+Mary,Johnson,mary.johnson@testhospital.com,+2348012345002,Doctor,Pediatrics
+James,Williams,james.williams@testhospital.com,+2348012345003,Doctor,Cardiology
+Patricia,Brown,patricia.brown@testhospital.com,+2348012345004,Doctor,Orthopedics
+Robert,Jones,robert.jones@testhospital.com,+2348012345005,Nurse,
+Linda,Davis,linda.davis@testhospital.com,+2348012345006,Nurse,
+Michael,Miller,michael.miller@testhospital.com,+2348012345007,Nurse,
+Elizabeth,Wilson,elizabeth.wilson@testhospital.com,+2348012345008,Nurse,
+David,Moore,david.moore@testhospital.com,+2348012345009,Pharmacist,
+Jennifer,Taylor,jennifer.taylor@testhospital.com,+2348012345010,Pharmacist,

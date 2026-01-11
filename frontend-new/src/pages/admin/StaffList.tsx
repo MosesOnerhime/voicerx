@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
-import { Users, Eye, Ban, Search, Loader2 } from "lucide-react";
+import { Users, Eye, Ban, Search, Loader2, UserPlus } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Badge } from "../../components/ui/badge";
+import { PageHeader } from "../../components/ui/PageHeader";
+import { Link } from "react-router-dom";
 import {
   Table,
   TableBody,
@@ -117,18 +119,22 @@ const StaffList = () => {
 
   return (
       <div className="space-y-6">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-foreground">Staff List</h1>
-            <p className="text-muted-foreground mt-1">
-              Manage and view all staff members
-            </p>
-          </div>
-          <Button asChild>
-            <a href="/staff/upload">Add Staff</a>
-          </Button>
-        </div>
+        <PageHeader
+          title="Staff List"
+          description="Manage and view all staff members"
+          breadcrumbs={[
+            { label: "Staff Management" },
+          ]}
+          backHref="/admin/dashboard"
+          actions={
+            <Button asChild>
+              <Link to="/admin/staff/upload-staff" className="flex items-center gap-2">
+                <UserPlus className="h-4 w-4" />
+                Add Staff
+              </Link>
+            </Button>
+          }
+        />
 
         {/* Staff Table Card */}
         <Card className="shadow-card">

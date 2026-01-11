@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
 import { Badge } from "../../components/ui/badge";
+import { PageHeader } from "../../components/ui/PageHeader";
 import {
   Table,
   TableBody,
@@ -54,21 +55,19 @@ const mockRoles: Role[] = [
 const RolesPermissions = () => {
     
   return (
-   
       <div className="space-y-6">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-foreground">Roles & Permissions</h1>
-            <p className="text-muted-foreground mt-1">
-              Manage user roles and their permissions
-            </p>
-          </div>
-          <Button className="gap-2">
-            <Plus className="h-4 w-4" />
-            Add Role
-          </Button>
-        </div>
+        <PageHeader
+          title="Roles & Permissions"
+          description="Manage user roles and their permissions"
+          breadcrumbs={[{ label: "Roles & Permissions" }]}
+          backHref="/admin/dashboard"
+          actions={
+            <Button className="gap-2">
+              <Plus className="h-4 w-4" />
+              Add Role
+            </Button>
+          }
+        />
 
         {/* Roles Card */}
         <Card className="shadow-card">
