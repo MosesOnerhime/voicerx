@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../..
 import { Button } from "../../components/ui/button";
 import { useToast } from "../../hooks/use-toast";
 import { useSelector } from "react-redux";
-import { RootState } from "../../store";
+import { type RootState } from "../../store";
 import { PageHeader } from "../../components/ui/PageHeader";
 
 interface ValidationError {

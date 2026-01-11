@@ -14,7 +14,7 @@ import {
 import { toast } from "../../hooks/use-toast";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
-import { Search, Filter, RefreshCw, UserPlus } from "lucide-react";
+import { Search, Filter, RefreshCw, UserPlus, Bell, Users } from "lucide-react";
 
 //  local components
 import { QueueStats } from "../../components/QueueStats";
@@ -23,6 +23,8 @@ import { PatientIntakeModal } from "../../components/PatientIntakeModal";
 import  RecordNewPatient  from "./RecordNewPatient";
 import { DoctorAssignmentDialog } from "../../components/DoctorAssignmentDialog";
 
+// Assuming you fetch this from your backend
+const availableDoctorsCount = 5;
 
 export default function NurseOverview() {
 
@@ -38,6 +40,7 @@ export default function NurseOverview() {
     const [modalOpen, setModalOpen] = useState(false);
     const [newPatientOpen, setNewPatientOpen] = useState(false);
     const [doctorDialogOpen, setDoctorDialogOpen] = useState(false);
+    const [showPopUp, setShowPopUp] = useState(false);
 
     // 1. Fetch Appointments (The Queue)
     const fetchQueue = async () => {
@@ -177,6 +180,46 @@ return (
                     </div>
                 </section>
             </main>
+
+            {/* Circular Floating Button */}
+      <div className="fixed bottom-8 right-8 z-50">
+        <button 
+          onClick={() => setShowPopUp(!showPopUp)}
+          className="relative p-4 bg-[#390C87] text-white rounded-full shadow-2xl hover:scale-110 transition-transform active:scale-95"
+        >
+          <Users size={28} />
+          {availableDoctorsCount > 0 && (
+            <span className="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded-full border-2 border-white translate-x-1/4 -translate-y-1/4">
+              {availableDoctorsCount}
+            </span>
+          )}
+        </button>
+
+        {/* Small Pop-up Notification */}
+        {showPopUp && (
+          <div className="absolute bottom-20 right-0 w-72 bg-white rounded-2xl shadow-2xl border border-gray-100 p-4 animate-in fade-in slide-in-from-bottom-4">
+            <div className="flex justify-between items-center mb-3">
+              <h3 className="font-bold text-gray-800 text-sm">Available Doctors</h3>
+              <span className="text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-bold">Live</span>
+            </div>
+            <div className="space-y-3">
+              {/* Short list of 3 doctors */}
+              {['Dr. Onerhime', 'Dr. Kosiso', 'Dr. Sarah'].map((doc) => (
+                <div key={doc} className="flex items-center gap-3">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span className="text-sm text-gray-600 font-medium">{doc}</span>
+                </div>
+              ))}
+            </div>
+            <button 
+              onClick={() => navigate('/nurse/available-doctors')}
+              className="w-full mt-4 py-2 text-xs font-bold text-[#390C87] bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors"
+            >
+              View Full Directory
+            </button>
+          </div>
+        )}
+      </div>
 
             {/* Modals & Dialogs */}
             <PatientIntakeModal

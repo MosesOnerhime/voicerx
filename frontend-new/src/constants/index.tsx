@@ -14,6 +14,8 @@ import {
   Stethoscope, 
   UserCheck,
   Clock,
+  User,
+  Bell,
   CheckCircle2
 } from 'lucide-react';
 
@@ -35,12 +37,15 @@ export const navConfig = {
   nurse: [
     { name: 'Dashboard', path: '/nurse/dashboard', icon: LayoutDashboard },
     { name: 'Patient Records', path: '/nurse/patients', icon: FileText },
-    { name: 'Register Patient', path: '/nurse/register-patient', icon: UserPlus }
+    { name: 'Register Patient', path: '/nurse/register-patient', icon: UserPlus },
+    { name: 'Available Doctors', path: '/nurse/available-doctors', icon: UserPlus }
   ],
   doctor: [
-    { name: 'Patient Queue', path: '/doctor/queue', icon: ClipboardList },
-    { name: 'Consultations', path: '/doctor/consult', icon: Stethoscope },
-    { name: 'Status', path: '/doctor/status', icon: UserCheck }
+    { name: 'Dashboard', path: '/doctor/dashboard', icon: LayoutDashboard },
+  { name: 'Patients', path: '/doctor/patients', icon: Users },
+  { name: 'Records', path: '/doctor/records', icon: FileText },
+  { name: 'Notifications', path: '/doctor/notifications', icon: Bell },
+  { name: 'Profile', path: '/doctor/profile', icon: User }
   ],
   pharmacist: [
     { name: 'Dashboard', path: '/pharmacy/dashboard', icon: LayoutDashboard },
@@ -48,3 +53,4 @@ export const navConfig = {
     { name: 'Dispensed', path: '/pharmacy/dispensed', icon: CheckCircle2 }
   ]
 };
+

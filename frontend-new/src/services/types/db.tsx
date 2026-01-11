@@ -45,27 +45,82 @@ export interface Appointment {
 export type Status = "pending" | "dispensed";
 
 export interface Medication {
-  id: number;
-  medication_name: string;
+  id: string;
+  medicationName: string;
   dosage: string;
   quantity: string;
   instructions?: string;
 }
 
 export interface Prescription {
-  id: number;
-  appointmentid: number;
-  patient_name: string;
+  id: string;
+  appointmentId: number;
+  patientName: string;
   patient_id: string;
-  prescribed_by: string;
-  assigned_pharmacist_id: string;
+  prescribedBy: string;
+  assignedPharmacistId: string;
   priority: Priority;
   status: Status;
-  date_issued: string;
-  date_dispensed: string | null;
-  pharmacist_notes: string | null;
+  dateIssued: string;
+  dateDispensed: string | null;
+  pharmacistNotes: string | null;
   notes?: string;
   medications?: Medication[];
 }
 
+export type RecordStatus = 'pending' | 'updated' | 'approved';
+
+export interface PatientAppt {
+  appointmentId: string;
+  patient: Patient;
+  lastUpdated: string;
+  status: RecordStatus;
+  visitDate: string;
+  assignedDoctor: string;
+}
+
+export interface Vitals {
+  bloodPressure: string;
+  temperature: string;
+  heartRate: string;
+  respiratoryRate: string;
+  oxygenSaturation: string;
+}
+
+export interface IntakeNotes {
+  symptoms: string[];
+  vitals: Vitals;
+  nurseNotes: string;
+  transcriptionNotes: string;
+  enteredBy: string;
+  enteredAt: string;
+}
+
+export interface DiagnosisTreatment {
+  diagnosis: string;
+  treatmentPlan: string;
+  prescriptions: string[];
+  doctorNotes: string;
+}
+
+export interface PatientRecord {
+  patient: Patient;
+  intakeNotes: IntakeNotes;
+  diagnosisTreatment: DiagnosisTreatment;
+  history: HistoryEntry[];
+}
+
+export interface HistoryEntry {
+  date: string;
+  action: string;
+  performedBy: string;
+  role: string;
+}
+
+export interface ActivityItem {
+  id: string;
+  message: string;
+  timestamp: string;
+  type: 'intake' | 'update' | 'approval';
+}
 
