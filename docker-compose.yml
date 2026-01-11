@@ -25,10 +25,11 @@ services:
     container_name: voicerx-backend
     ports:
       - "5001:5001"
+    env_file:
+      - ./backend/.env
     environment:
       DATABASE_URL: postgresql://voicerx:voicerx123@postgres:5432/voicerx
       JWT_SECRET: your-secret-key-change-in-production
-      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
     depends_on:
       postgres:
         condition: service_healthy
@@ -36,7 +37,7 @@ services:
       - ./backend:/app
       - /app/node_modules
       - /app/.next
-    command: sh -c "npx prisma migrate deploy && npm run dev"
+    command: sh -c "npx prisma migrate deploy && npx tsx prisma/seed.ts && npm run dev"
 
   # Frontend (React + Vite)
   frontend:
@@ -48,6 +49,7 @@ services:
       - "5173:5173"
     environment:
       VITE_API_URL: http://localhost:5001/api
+      VITE_BACKEND_URL: http://backend:5001
     depends_on:
       - backend
     volumes:
