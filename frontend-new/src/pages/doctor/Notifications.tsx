@@ -26,41 +26,11 @@ export default function Notifications() {
   })) as Activity[];
 
   return (
-    <div className="flex min-h-screen bg-[#FBFBFE]">
-      {/* --- SIDEBAR --- */}
-      <aside className="w-64 bg-[#1E1B4B] text-white flex flex-col fixed h-full shadow-2xl z-20">
-        <div className="p-6 flex items-center gap-3">
-          <div className="bg-[#7C3AED] p-2 rounded-lg shadow-lg shadow-purple-500/40">
-            <ClipboardList size={20} />
-          </div>
-          <div>
-            <h1 className="font-bold text-lg tracking-tight">HealthSync</h1>
-            <p className="text-[10px] text-purple-300 uppercase tracking-widest font-semibold mt-1">Physician Portal</p>
-          </div>
-        </div>
-
-        <nav className="flex-1 px-3 space-y-1 mt-4">
-          <Link to="/" className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-white/5 transition-all">
-            <LayoutDashboard size={18} />
-            <span className="font-semibold text-sm">Dashboard</span>
-          </Link>
-          <Link to="/patients" className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-white/5">
-            <Users size={18} />
-            <span className="font-semibold text-sm">Patients</span>
-          </Link>
-          <Link to="/records" className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-white/5">
-            <FileText size={18} />
-            <span className="font-semibold text-sm">Records</span>
-          </Link>
-          <div className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-[#7C3AED] text-white shadow-lg shadow-purple-600/40">
-            <Bell size={18} />
-            <span className="font-semibold text-sm">Notifications</span>
-          </div>
-        </nav>
-      </aside>
-
+    
+<div className="space-y-6">
+        <main className="container mx-auto px-6 py-8">
       {/* --- MAIN CONTENT --- */}
-      <main className="flex-1 ml-64 p-8">
+      
         <header className="flex justify-between items-center mb-8">
           <div>
             <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Notifications</h2>
@@ -133,7 +103,7 @@ export default function Notifications() {
             </div>
           </div>
         </div>
-      </main>
+   </main>
     </div>
   );
 }

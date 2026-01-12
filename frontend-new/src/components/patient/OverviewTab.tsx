@@ -55,23 +55,23 @@ export function OverviewTab({ record }: OverviewTabProps) {
         <CardContent className="space-y-3">
           <div className="flex justify-between">
             <span className="text-sm text-muted-foreground">Blood Pressure</span>
-            <span className="text-sm font-medium">{intakeNotes.vitals.bloodPressure}</span>
+            <span className="text-sm font-medium">{intakeNotes?.vitals.bloodPressure || 'N/A'}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-sm text-muted-foreground">Temperature</span>
-            <span className="text-sm font-medium">{intakeNotes.vitals.temperature}</span>
+            <span className="text-sm font-medium">{intakeNotes?.vitals.temperature || 'N/A'}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-sm text-muted-foreground">Heart Rate</span>
-            <span className="text-sm font-medium">{intakeNotes.vitals.heartRate}</span>
+            <span className="text-sm font-medium">{intakeNotes?.vitals.heartRate || 'N/A'}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-sm text-muted-foreground">Respiratory Rate</span>
-            <span className="text-sm font-medium">{intakeNotes.vitals.respiratoryRate}</span>
+            <span className="text-sm font-medium">{intakeNotes?.vitals.respiratoryRate || 'N/A'}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-sm text-muted-foreground">O2 Saturation</span>
-            <span className="text-sm font-medium">{intakeNotes.vitals.oxygenSaturation}</span>
+            <span className="text-sm font-medium">{intakeNotes?.vitals.oxygenSaturation || 'N/A'}</span>
           </div>
         </CardContent>
       </Card>

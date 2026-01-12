@@ -37,6 +37,27 @@ export const MOCK_DASHBOARD_DATA: PatientAppt[] = [
     status: "pending" as any, // Matching your ApptStatus
     visitDate: "2026-01-11",
     assignedDoctor: "Dr. Onerhime",
+  intakeNotes: {
+    vitals: {
+      bloodPressure: "120/80",
+      temperature: "36.5",
+      heartRate: "72",
+      respiratoryRate: "16",
+      oxygenSaturation: "98"
+    },
+    symptoms: ["Headache", "Fever"],
+    nurseNotes: "Patient arrived complaining of mild migraine.",
+    transcriptionNotes: "...",
+    enteredBy: "Nurse Joy",
+    enteredAt: new Date().toISOString()
+  },
+  diagnosisTreatment: {
+    diagnosis: "Common Cold",
+    treatmentPlan: "Rest and hydration",
+    prescriptions: ["Paracetamol"],
+    doctorNotes: "Monitor for 24 hours"
+  },
+  history: []
   },
   {
     appointmentId: "1244",
@@ -45,5 +66,26 @@ export const MOCK_DASHBOARD_DATA: PatientAppt[] = [
     status: "approved" as any,
     visitDate: "2026-01-11",
     assignedDoctor: "Dr. Kosiso",
+    intakeNotes: {
+    vitals: {
+      bloodPressure: "120/80",
+      temperature: "36.5",
+      heartRate: "72",
+      respiratoryRate: "16",
+      oxygenSaturation: "98"
+    },
+    symptoms: ["Headache", "Fever"],
+    nurseNotes: "Patient arrived complaining of mild migraine.",
+    transcriptionNotes: "...",
+    enteredBy: "Nurse Joy",
+    enteredAt: new Date().toISOString()
+  },
+  diagnosisTreatment: {
+    diagnosis: "Common Cold",
+    treatmentPlan: "Rest and hydration",
+    prescriptions: ["Paracetamol"],
+    doctorNotes: "Monitor for 24 hours"
+  },
+  history: []
   }
 ];

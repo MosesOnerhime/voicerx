@@ -4,6 +4,9 @@ import {
   Search, Bell, FileText, Eye,
 } from 'lucide-react';
 import { MOCK_DASHBOARD_DATA as mock } from '../../data/mockData';
+import { type PatientAppt } from '../../services/types/db';
+import { calculateAge } from '../../lib/dateUtils';
+import { useNavigate } from 'react-router-dom';
 
 
 // --- TYPES TO FIX THE ERRORS ---
@@ -23,29 +26,30 @@ interface Activity {
 }
 
 export default function Dashboard() {
+  const navigate = useNavigate();
   // Use 'unknown' first to break the type conflict as suggested by the error
-  const patients = (mock as unknown) as Patient[];
+  const appointments = mock as PatientAppt[];
   
   // This mapping fixes the 'Property content is missing' error 
   // by ensuring whatever the mock data has, it gets assigned to 'content'
-  const activities = (mock as any[]).map(act => ({
-    type: act.type || 'update',
-    content: act.content || act.description || "Activity updated", 
-    timestamp: act.timestamp || act.time || "Just now"
+  const activities = appointments.map(appt => ({
+    type: (appt.status === 'approved' ? 'status': 'record') as Activity['type'],
+    content: `Record for ${appt.patient.firstName} ${appt.patient.lastName} was ${appt.status}`,
+    timestamp: new Date(appt.lastUpdated).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
   })) as Activity[];
 
-  const pendingCount = patients.filter(p => p.status === 'pending').length;
-  const updatedCount = patients.filter(p => p.status === 'updated').length;
-  const approvedCount = patients.filter(p => p.status === 'approved').length;
+  const pendingCount = appointments.filter(p => p.status === 'pending').length;
+  const updatedCount = appointments.filter(p => p.status === 'updated').length;
+  const approvedCount = appointments.filter(p => p.status === 'approved').length;
 
   return (
-    <div className="flex min-h-screen bg-[#FBFBFE] font-sans">   
+    <div className="space-y-8"> 
       {/* --- MAIN CONTENT --- */}
-      <main className="flex-1 ml-64 p-8">
+      
         <header className="flex justify-between items-center mb-8">
           <div>
             <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Dashboard</h2>
-            <p className="text-slate-500 text-sm font-medium">Welcome back, Dr. Chen</p>
+            <p className="text-slate-500 text-sm font-medium">Welcome back,</p>
           </div>
           <div className="flex items-center gap-4">
             <div className="relative group">
@@ -62,7 +66,7 @@ export default function Dashboard() {
         {/* --- STATS CARDS: Matches the layout in image_372aa7.png --- */}
         <div className="grid grid-cols-4 gap-6 mb-8">
           {[
-            { label: 'Total Patients', val: patients.length, icon: Users, color: 'text-purple-600', bg: 'bg-purple-50', trend: '↑ 12% from last week' },
+            { label: 'Total Patients', val: appointments.length, icon: Users, color: 'text-purple-600', bg: 'bg-purple-50', trend: '↑ 12% from last week' },
             { label: 'Pending Review', val: pendingCount, icon: Clock, color: 'text-indigo-600', bg: 'bg-indigo-50' },
             { label: 'Updated Records', val: updatedCount, icon: AlertCircle, color: 'text-violet-600', bg: 'bg-violet-50' },
             { label: 'Approved Today', val: approvedCount, icon: CheckCircle, color: 'text-emerald-600', bg: 'bg-emerald-50', trend: '↑ 3 records' },
@@ -95,36 +99,37 @@ export default function Dashboard() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50">
-                {patients.map((patient) => (
-                  <tr key={patient.id} className="hover:bg-slate-50/50 transition-colors group cursor-pointer">
+                {appointments.map((appt) => (
+                  <tr key={appt.appointmentId} className="hover:bg-slate-50/50 transition-colors group cursor-pointer">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div className="w-9 h-9 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center font-bold text-[11px] border border-slate-200">
-                          {patient.name.split(' ').map(n => n[0]).join('')}
+                          {appt.patient?.firstName?.[0]}{appt.patient?.lastName?.[0]}
                         </div>
                         <div>
-                          <p className="font-bold text-slate-900 text-[13px] leading-tight group-hover:text-purple-600 transition-colors">{patient.name}</p>
-                          <p className="text-[11px] text-slate-400 mt-0.5 font-semibold">{patient.age} yrs, {patient.gender}</p>
+                          <p className="font-bold text-slate-900 text-[13px] leading-tight group-hover:text-purple-600 transition-colors">{appt.patient?.firstName} {appt.patient?.lastName}</p>
+                          <p className="text-[11px] text-slate-400 mt-0.5 font-semibold">{calculateAge(appt.patient?.dateOfBirth)}  yrs, {appt.patient.gender}</p>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-xs font-mono font-bold text-slate-400 uppercase tracking-tighter">{patient.id}</td>
-                    <td className="px-6 py-4 text-xs text-slate-500 font-semibold">{patient.visitDate}</td>
+                    <td className="px-6 py-4 text-xs font-mono font-bold text-slate-400 uppercase tracking-tighter">{appt.patient.id}</td>
+                    <td className="px-6 py-4 text-xs text-slate-500 font-semibold">{appt.visitDate}</td>
                     <td className="px-6 py-4">
                       <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold border ${
-                        patient.status === 'approved' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' :
-                        patient.status === 'updated' ? 'bg-amber-50 text-amber-600 border-amber-100' :
+                        appt.status === 'approved' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' :
+                        appt.status === 'updated' ? 'bg-amber-50 text-amber-600 border-amber-100' :
                         'bg-purple-50 text-purple-600 border-purple-100'
                       }`}>
                         <div className={`w-1.5 h-1.5 rounded-full ${
-                          patient.status === 'approved' ? 'bg-emerald-500' :
-                          patient.status === 'updated' ? 'bg-amber-500' : 'bg-purple-500'
+                          appt.status === 'approved' ? 'bg-emerald-500' :
+                          appt.status === 'updated' ? 'bg-amber-500' : 'bg-purple-500'
                         }`} />
-                        {patient.status === 'pending' ? 'Pending Review' : patient.status.charAt(0).toUpperCase() + patient.status.slice(1)}
+                        {appt.status === 'pending' ? 'Pending Review' : appt.status.charAt(0).toUpperCase() + appt.status.slice(1)}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <button className="text-[10px] font-bold px-3 py-1.5 border border-slate-200 rounded-lg hover:bg-slate-900 hover:text-white transition-all flex items-center gap-1.5 ml-auto uppercase tracking-tighter shadow-sm bg-white">
+                      <button className="text-[10px] font-bold px-3 py-1.5 border border-slate-200 rounded-lg hover:bg-slate-900 hover:text-white transition-all flex items-center gap-1.5 ml-auto uppercase tracking-tighter shadow-sm bg-white"
+                      onClick={() => navigate(`/doctor/patient/${appt.patient.id}`)}>
                         <Eye size={12} /> View Record
                       </button>
                     </td>
@@ -156,7 +161,7 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
-      </main>
+      
     </div>
   );
 }
