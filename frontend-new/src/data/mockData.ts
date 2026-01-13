@@ -1,4 +1,4 @@
-import type { Patient, Appointment, PatientAppt, ApptStatus, Priority } from '../services/types/db';
+import type { Patient } from '../services/types/db';
 
 // 1. Mock Patients (The permanent records)
 export const MOCK_PATIENTS: Patient[] = [
@@ -29,7 +29,8 @@ export const MOCK_PATIENTS: Patient[] = [
 ];
 
 // 2. Mock PatientAppt (The "Joined" view for Dashboards)
-export const MOCK_DASHBOARD_DATA: PatientAppt[] = [
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const MOCK_DASHBOARD_DATA: any[] = [
   {
     appointmentId: "1234",
     patient: MOCK_PATIENTS[0],

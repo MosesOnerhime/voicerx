@@ -2,7 +2,7 @@
 import './App.css'
 import Gendashboard from './components/Gendashboard';
 import Register from './pages/Register'
-import { BrowserRouter, Route, Routes, Navigate, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
 import { Toaster } from "./components/ui/overlays-and-feedback";
 import { TooltipProvider } from "./components/ui/data-display";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
