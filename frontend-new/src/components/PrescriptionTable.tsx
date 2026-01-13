@@ -25,7 +25,9 @@ export default function PrescriptionTable({ statusFilter, title }: TableProps) {
       if (searchQuery) params.append("search", searchQuery);
       const res = await fetch(`/api/prescriptions?${params}`);
       if (!res.ok) throw new Error("Failed to fetch");
-      return res.json();
+      const data = await res.json();
+      // Backend returns { prescriptions: [...], pagination: {...} }
+      return data.prescriptions || [];
     },
   });
 
