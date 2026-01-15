@@ -5,8 +5,6 @@ import { Eye, EyeOff, Building2, Loader2, ArrowRight, Sparkles } from "lucide-re
 import { useToast } from "../hooks/use-toast";
 import axios from "axios";
 
-// API URL - uses Vite proxy to forward to backend
-const API_URL = '/api';
 
 // Demo data arrays for generating random credentials
 const hospitalPrefixes = ["Lagos", "Abuja", "Ibadan", "Kano", "Port Harcourt", "Enugu", "Kaduna", "Benin", "Onitsha", "Owerri"];
@@ -106,7 +104,7 @@ export default function SignUp() {
 
       // 3. API Call
     await axios.post(
-      "https://voicerxbackend.vercel.app/api/auth/register",
+      "http://localhost:5001/api/auth/register",
       payload
     );
 
