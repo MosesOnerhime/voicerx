@@ -1,29 +1,20 @@
-import axios from 'axios';
-import type { Patient } from '../types/db';
-
-const API_URL = '/api';
-
+// services/api/patients.ts
 export const patientApi = {
-  getAll: async (token: string): Promise<Patient[]> => {
-    const response = await axios.get(`${API_URL}/patients`, {
+  getAll: async (token: string) => {
+    const response = await fetch("http://localhost:5001/api/patients", {
+      method: "GET",
       headers: {
-        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
       },
     });
-    // Backend returns { patients: [...], pagination: {...} }
-    return response.data.patients || [];
-  },
-  // Create a new patient entry in the database
-  create: async (payload: any, token: string) => {
-    const response = await axios.post(`${API_URL}/patients`, payload, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
-    });
-    return response.data;
-  },
 
-  //edit a patient info
+    if (!response.ok) {
+      throw new Error("Failed to fetch patients");
+    }
 
+    const data = await response.json();
+    // Your backend returns { patients: [...], pagination: {...} }
+    return data.patients; // Return just the patients array
+  },
 };

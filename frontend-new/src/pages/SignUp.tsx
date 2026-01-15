@@ -106,7 +106,7 @@ export default function SignUp() {
 
       // 3. API Call
     await axios.post(
-      "https://voicerxbackend.vercel.app/api/auth/register",
+      "http://localhost:5001/api/auth/register",
       payload
     );
 
