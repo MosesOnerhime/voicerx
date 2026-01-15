@@ -105,9 +105,10 @@ export default function SignUp() {
       };
 
       // 3. API Call
-      await axios.post(`${API_URL}/auth/register`, payload);
-      console.log("Registration API Success!");
-      
+    await axios.post(
+      "https://voicerxbackend.vercel.app/api/auth/register",
+      payload
+    );
 
       // 4. Success Handling
       toast({
