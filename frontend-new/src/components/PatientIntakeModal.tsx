@@ -22,6 +22,8 @@ import { toast } from "../hooks/use-toast";
 import { useVoiceRecording, formatDuration } from "../hooks/useVoiceRecording";
 import axios from "axios";
 
+const API_URL = 'http://localhost:5001/api';
+
 interface PatientIntakeModalProps {
   appointment: Appointment | null;
   open: boolean;
@@ -40,11 +42,63 @@ export function PatientIntakeModal({ appointment, open, onOpenChange, onVitalsSa
 
   // Check if AI features are available
   useEffect(() => {
-    fetch('/api/voice/status')
+    fetch(`${API_URL}/voice/status`)
       .then(res => res.json())
       .then(data => setAiEnabled(data.aiEnabled))
       .catch(() => setAiEnabled(false));
   }, []);
+
+  // Load existing vitals when modal opens
+  useEffect(() => {
+    const fetchExistingVitals = async () => {
+      if (!open || !appointment || !token) return;
+
+      // Only fetch if vitals might exist (status is not CREATED)
+      if (appointment.status === 'CREATED') {
+        // Reset form for new vitals
+        setFormData({
+          bloodPressureSystolic: "",
+          bloodPressureDiastolic: "",
+          pulseRate: "",
+          temperature: "",
+          respiratoryRate: "",
+          oxygenSaturation: "",
+          weight: "",
+          height: "",
+          painLevel: "",
+          symptomsDescription: ""
+        });
+        return;
+      }
+
+      try {
+        const response = await axios.get(`${API_URL}/vitals?appointmentId=${appointment.id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        const vitals = response.data.vitalsRecord;
+        if (vitals) {
+          setFormData({
+            bloodPressureSystolic: vitals.bloodPressureSystolic?.toString() || "",
+            bloodPressureDiastolic: vitals.bloodPressureDiastolic?.toString() || "",
+            pulseRate: vitals.pulseRate?.toString() || "",
+            temperature: vitals.temperature?.toString() || "",
+            respiratoryRate: vitals.respiratoryRate?.toString() || "",
+            oxygenSaturation: vitals.oxygenSaturation?.toString() || "",
+            weight: vitals.weight?.toString() || "",
+            height: vitals.height?.toString() || "",
+            painLevel: vitals.painLevel?.toString() || "",
+            symptomsDescription: vitals.symptomsDescription || ""
+          });
+        }
+      } catch (error) {
+        // No existing vitals or error - form stays empty
+        console.log("No existing vitals found or error fetching");
+      }
+    };
+
+    fetchExistingVitals();
+  }, [open, appointment, token]);
 
   // Real voice recording hook
   const {
@@ -118,7 +172,7 @@ export function PatientIntakeModal({ appointment, open, onOpenChange, onVitalsSa
       formDataToSend.append('audio', audioBlob, 'recording.webm');
       formDataToSend.append('appointmentId', appointment.id);
 
-      const response = await axios.post('/api/voice', formDataToSend, {
+      const response = await axios.post(`${API_URL}/voice`, formDataToSend, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -206,17 +260,37 @@ export function PatientIntakeModal({ appointment, open, onOpenChange, onVitalsSa
         recordedVia: usedVoice ? 'VOICE' : 'MANUAL',
       };
 
-      await axios.post('/api/vitals', payload, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
+      // Check if vitals already exist based on appointment status
+      // Statuses after CREATED mean vitals have been recorded
+      const vitalsAlreadyExist = appointment.status !== 'CREATED';
 
-      toast({
-        title: "Vitals Saved",
-        description: `Vitals recorded for ${appointment.patient?.firstName} ${appointment.patient?.lastName}. Patient ready for doctor assignment.`,
-      });
+      if (vitalsAlreadyExist) {
+        // Update existing vitals with PUT
+        await axios.put(`${API_URL}/vitals`, payload, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        toast({
+          title: "Vitals Updated",
+          description: `Vitals updated for ${appointment.patient?.firstName} ${appointment.patient?.lastName}.`,
+        });
+      } else {
+        // Create new vitals with POST
+        await axios.post(`${API_URL}/vitals`, payload, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        toast({
+          title: "Vitals Saved",
+          description: `Vitals recorded for ${appointment.patient?.firstName} ${appointment.patient?.lastName}. Patient ready for doctor assignment.`,
+        });
+      }
 
       // Reset form and close modal
       setFormData({

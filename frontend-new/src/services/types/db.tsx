@@ -39,6 +39,11 @@ export interface Appointment {
   priority: Priority;
   createdAt: string;
   assignedDoctorId?: string;
+  assignedDoctor?: {
+    firstName: string;
+    lastName: string;
+    specialization?: string;
+  };
   chiefComplaint?: string;
 }
 

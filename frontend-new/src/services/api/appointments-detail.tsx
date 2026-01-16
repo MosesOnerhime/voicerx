@@ -1,7 +1,7 @@
 import axios from 'axios';
 import type { Appointment } from '../types/db';
 
-const API_URL = '/api';
+const API_URL = 'http://localhost:5001/api';
 
 export const appointmentDetailApi = {
   // GET - Get complete appointment details with all related data

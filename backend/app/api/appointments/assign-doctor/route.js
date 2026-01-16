@@ -96,6 +96,14 @@ export async function POST(request) {
       );
     }
 
+    // Check if doctor is available for new assignments
+    if (!doctor.isAvailable) {
+      return Response.json(
+        { error: 'This doctor is currently unavailable for new patient assignments' },
+        { status: 400 }
+      );
+    }
+
     // Assign appointment to doctor
     // Status: VITALS_RECORDED → IN_QUEUE
     const updatedAppointment = await prisma.appointment.update({

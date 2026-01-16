@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { PrismaClient, BloodType, Genotype, Gender, UserRole, PatientStatus } from '../generated/prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
@@ -63,8 +64,45 @@ async function main() {
   });
   console.log('Created nurse:', nurse.email);
 
-  // Create Doctor
-  const doctor = await prisma.user.upsert({
+  // Create Doctors (matching frontend demo accounts)
+  const doctorJohn = await prisma.user.upsert({
+    where: { email: 'john.smith@testhospital.com' },
+    update: {},
+    create: {
+      email: 'john.smith@testhospital.com',
+      passwordHash: hashedPassword,
+      firstName: 'John',
+      lastName: 'Smith',
+      phone: '+234 800 000 0012',
+      role: UserRole.DOCTOR,
+      specialization: 'General Practice',
+      hospitalId: hospital.id,
+      isActive: true,
+      isAvailable: true,
+    },
+  });
+  console.log('Created doctor:', doctorJohn.email);
+
+  const doctorMary = await prisma.user.upsert({
+    where: { email: 'mary.johnson@testhospital.com' },
+    update: {},
+    create: {
+      email: 'mary.johnson@testhospital.com',
+      passwordHash: hashedPassword,
+      firstName: 'Mary',
+      lastName: 'Johnson',
+      phone: '+234 800 000 0015',
+      role: UserRole.DOCTOR,
+      specialization: 'Internal Medicine',
+      hospitalId: hospital.id,
+      isActive: true,
+      isAvailable: true,
+    },
+  });
+  console.log('Created doctor:', doctorMary.email);
+
+  // Keep Sarah Chen as well
+  const doctorSarah = await prisma.user.upsert({
     where: { email: 'sarah.chen@testhospital.com' },
     update: {},
     create: {
@@ -72,47 +110,65 @@ async function main() {
       passwordHash: hashedPassword,
       firstName: 'Sarah',
       lastName: 'Chen',
-      phone: '+234 800 000 0012',
+      phone: '+234 800 000 0016',
       role: UserRole.DOCTOR,
+      specialization: 'Pediatrics',
       hospitalId: hospital.id,
       isActive: true,
+      isAvailable: true,
     },
   });
-  console.log('Created doctor:', doctor.email);
+  console.log('Created doctor:', doctorSarah.email);
 
-  // Create Pharmacist
-  const pharmacist = await prisma.user.upsert({
-    where: { email: 'mike.wilson@testhospital.com' },
+  // Create Pharmacists (matching frontend demo accounts)
+  const pharmacistDavid = await prisma.user.upsert({
+    where: { email: 'david.moore@testhospital.com' },
     update: {},
     create: {
-      email: 'mike.wilson@testhospital.com',
+      email: 'david.moore@testhospital.com',
       passwordHash: hashedPassword,
-      firstName: 'Mike',
-      lastName: 'Wilson',
-      phone: '+234 800 000 0013',
+      firstName: 'David',
+      lastName: 'Moore',
+      phone: '+234 800 000 0017',
       role: UserRole.PHARMACIST,
       hospitalId: hospital.id,
       isActive: true,
     },
   });
-  console.log('Created pharmacist:', pharmacist.email);
+  console.log('Created pharmacist:', pharmacistDavid.email);
 
-  // Create Receptionist
-  const receptionist = await prisma.user.upsert({
-    where: { email: 'jane.doe@testhospital.com' },
+  const pharmacistJennifer = await prisma.user.upsert({
+    where: { email: 'jennifer.taylor@testhospital.com' },
     update: {},
     create: {
-      email: 'jane.doe@testhospital.com',
+      email: 'jennifer.taylor@testhospital.com',
       passwordHash: hashedPassword,
-      firstName: 'Jane',
-      lastName: 'Doe',
-      phone: '+234 800 000 0014',
-      role: UserRole.RECEPTIONIST,
+      firstName: 'Jennifer',
+      lastName: 'Taylor',
+      phone: '+234 800 000 0018',
+      role: UserRole.PHARMACIST,
       hospitalId: hospital.id,
       isActive: true,
     },
   });
-  console.log('Created receptionist:', receptionist.email);
+  console.log('Created pharmacist:', pharmacistJennifer.email);
+
+  // Create second Nurse (matching frontend demo accounts)
+  const nurseLinda = await prisma.user.upsert({
+    where: { email: 'linda.davis@testhospital.com' },
+    update: {},
+    create: {
+      email: 'linda.davis@testhospital.com',
+      passwordHash: hashedPassword,
+      firstName: 'Linda',
+      lastName: 'Davis',
+      phone: '+234 800 000 0019',
+      role: UserRole.NURSE,
+      hospitalId: hospital.id,
+      isActive: true,
+    },
+  });
+  console.log('Created nurse:', nurseLinda.email);
 
   // Create a sample patient using raw enum string values (required for pg adapter)
   const patient = await prisma.patient.upsert({

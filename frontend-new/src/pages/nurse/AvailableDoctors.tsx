@@ -27,16 +27,17 @@ const AvailableDoctors = () => {
 
   const fetchDoctors = async () => {
     if (!token) return;
-    
+
     try {
       setIsLoading(true);
-      const url = showAvailableOnly 
-        ? 'http://localhost:3000/api/doctors/available?available=true'
-        : 'http://localhost:3000/api/doctors/available';
-        
+      // Use the assign-doctor endpoint which lists all doctors
+      const url = showAvailableOnly
+        ? 'http://localhost:5001/api/appointments/assign-doctor?available=true'
+        : 'http://localhost:5001/api/appointments/assign-doctor';
+
       const response = await fetch(url, {
         method: 'GET',
-        headers: { 
+        headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
@@ -47,7 +48,20 @@ const AvailableDoctors = () => {
       }
 
       const data = await response.json();
-      setDoctors(data.doctors || []);
+      // Map the response to match our Doctor interface
+      const mappedDoctors = (data.doctors || []).map((doc: any) => ({
+        id: doc.id,
+        firstName: doc.firstName,
+        lastName: doc.lastName,
+        name: doc.fullName || `Dr. ${doc.firstName} ${doc.lastName}`,
+        specialty: doc.specialization || 'General Practice',
+        email: `${doc.firstName.toLowerCase()}.${doc.lastName.toLowerCase()}@testhospital.com`,
+        isAvailable: doc.isAvailable,
+        isBusy: doc.isBusy,
+        currentPatients: doc.queueCount || 0,
+        queueCount: doc.queueCount || 0,
+      }));
+      setDoctors(mappedDoctors);
     } catch (error) {
       console.error("Failed to fetch doctors:", error);
       toast({

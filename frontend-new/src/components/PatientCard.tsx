@@ -91,10 +91,10 @@ export function PatientCard({
                 <span>Waiting: {waitingTime}</span>
               </div>
 
-              {status === "ASSIGNED" && assignedDoctor && (
+              {assignedDoctor && (
                 <div className="flex items-center gap-1.5 text-sm text-primary">
                   <Stethoscope className="h-4 w-4" aria-hidden="true" />
-                  <span>Dr. {assignedDoctor}</span>
+                  <span>{assignedDoctor}</span>
                 </div>
               )}
             </div>

@@ -8,7 +8,7 @@ interface OverviewTabProps {
 }
 
 export function OverviewTab({ record }: OverviewTabProps) {
-  const { patient, intakeNotes, diagnosisTreatment } = record;
+  const { patient, intakeNotes, diagnosisTreatment, visitDate } = record as any;
 
   return (
     <div className="grid gap-6 md:grid-cols-2">
@@ -23,7 +23,7 @@ export function OverviewTab({ record }: OverviewTabProps) {
         <CardContent className="space-y-3">
           <div className="flex justify-between">
             <span className="text-sm text-muted-foreground">Full Name</span>
-            <span className="text-sm font-medium">{patient.firstName}</span>
+            <span className="text-sm font-medium">{patient.firstName} {patient.lastName}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-sm text-muted-foreground">Age</span>
@@ -35,11 +35,11 @@ export function OverviewTab({ record }: OverviewTabProps) {
           </div>
           <div className="flex justify-between">
             <span className="text-sm text-muted-foreground">Patient ID</span>
-            <span className="text-sm font-medium font-mono">{patient.id}</span>
+            <span className="text-sm font-medium font-mono">{patient.patientIdNumber || patient.id}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-sm text-muted-foreground">Visit Date</span>
-            <span className="text-sm font-medium">{patient.registeredAt}</span>
+            <span className="text-sm font-medium">{visitDate || 'N/A'}</span>
           </div>
         </CardContent>
       </Card>
@@ -55,23 +55,23 @@ export function OverviewTab({ record }: OverviewTabProps) {
         <CardContent className="space-y-3">
           <div className="flex justify-between">
             <span className="text-sm text-muted-foreground">Blood Pressure</span>
-            <span className="text-sm font-medium">{intakeNotes?.vitals.bloodPressure || 'N/A'}</span>
+            <span className="text-sm font-medium">{intakeNotes?.vitals?.bloodPressure || 'N/A'}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-sm text-muted-foreground">Temperature</span>
-            <span className="text-sm font-medium">{intakeNotes?.vitals.temperature || 'N/A'}</span>
+            <span className="text-sm font-medium">{intakeNotes?.vitals?.temperature || 'N/A'}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-sm text-muted-foreground">Heart Rate</span>
-            <span className="text-sm font-medium">{intakeNotes?.vitals.heartRate || 'N/A'}</span>
+            <span className="text-sm font-medium">{intakeNotes?.vitals?.heartRate || 'N/A'}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-sm text-muted-foreground">Respiratory Rate</span>
-            <span className="text-sm font-medium">{intakeNotes?.vitals.respiratoryRate || 'N/A'}</span>
+            <span className="text-sm font-medium">{intakeNotes?.vitals?.respiratoryRate || 'N/A'}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-sm text-muted-foreground">O2 Saturation</span>
-            <span className="text-sm font-medium">{intakeNotes?.vitals.oxygenSaturation || 'N/A'}</span>
+            <span className="text-sm font-medium">{intakeNotes?.vitals?.oxygenSaturation || 'N/A'}</span>
           </div>
         </CardContent>
       </Card>
@@ -86,12 +86,16 @@ export function OverviewTab({ record }: OverviewTabProps) {
         </CardHeader>
         <CardContent>
           <ul className="space-y-2">
-            {intakeNotes.symptoms.map((symptom, index) => (
-              <li key={index} className="flex items-start gap-2 text-sm">
-                <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-healthcare-purple flex-shrink-0" />
-                {symptom}
-              </li>
-            ))}
+            {intakeNotes?.symptoms?.length > 0 ? (
+              intakeNotes.symptoms.map((symptom, index) => (
+                <li key={index} className="flex items-start gap-2 text-sm">
+                  <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-healthcare-purple flex-shrink-0" />
+                  {symptom}
+                </li>
+              ))
+            ) : (
+              <li className="text-sm text-muted-foreground italic">No symptoms recorded</li>
+            )}
           </ul>
         </CardContent>
       </Card>

@@ -22,8 +22,8 @@ export function IntakeNotesTab({ intakeNotes }: IntakeNotesTabProps) {
       <div className="flex items-center gap-4 rounded-lg border border-border bg-muted/30 px-4 py-3">
         <User className="h-5 w-5 text-muted-foreground" />
         <div className="flex-1">
-          <p className="text-sm font-medium">Entered by {intakeNotes.enteredBy}</p>
-          <p className="text-xs text-muted-foreground">{intakeNotes.enteredAt}</p>
+          <p className="text-sm font-medium">Entered by {intakeNotes?.enteredBy || 'Unknown'}</p>
+          <p className="text-xs text-muted-foreground">{intakeNotes?.enteredAt || 'N/A'}</p>
         </div>
         <span className="rounded-full bg-healthcare-teal-light px-2.5 py-0.5 text-xs font-medium text-healthcare-teal">
           Nurse / Medical Assistant
@@ -41,12 +41,16 @@ export function IntakeNotesTab({ intakeNotes }: IntakeNotesTabProps) {
           </CardHeader>
           <CardContent>
             <ul className="space-y-2">
-              {intakeNotes.symptoms.map((symptom, index) => (
-                <li key={index} className="flex items-start gap-2 text-sm text-foreground">
-                  <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-destructive flex-shrink-0" />
-                  {symptom}
-                </li>
-              ))}
+              {intakeNotes?.symptoms?.length > 0 ? (
+                intakeNotes.symptoms.map((symptom, index) => (
+                  <li key={index} className="flex items-start gap-2 text-sm text-foreground">
+                    <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-destructive flex-shrink-0" />
+                    {symptom}
+                  </li>
+                ))
+              ) : (
+                <li className="text-sm text-muted-foreground italic">No symptoms recorded</li>
+              )}
             </ul>
           </CardContent>
         </Card>
@@ -63,23 +67,23 @@ export function IntakeNotesTab({ intakeNotes }: IntakeNotesTabProps) {
             <div className="grid grid-cols-2 gap-4">
               <div className="rounded-lg bg-muted/50 p-3">
                 <p className="text-xs text-muted-foreground">Blood Pressure</p>
-                <p className="mt-1 text-lg font-semibold">{intakeNotes.vitals.bloodPressure}</p>
+                <p className="mt-1 text-lg font-semibold">{intakeNotes?.vitals?.bloodPressure || 'N/A'}</p>
               </div>
               <div className="rounded-lg bg-muted/50 p-3">
                 <p className="text-xs text-muted-foreground">Temperature</p>
-                <p className="mt-1 text-lg font-semibold">{intakeNotes.vitals.temperature}</p>
+                <p className="mt-1 text-lg font-semibold">{intakeNotes?.vitals?.temperature || 'N/A'}</p>
               </div>
               <div className="rounded-lg bg-muted/50 p-3">
                 <p className="text-xs text-muted-foreground">Heart Rate</p>
-                <p className="mt-1 text-lg font-semibold">{intakeNotes.vitals.heartRate}</p>
+                <p className="mt-1 text-lg font-semibold">{intakeNotes?.vitals?.heartRate || 'N/A'}</p>
               </div>
               <div className="rounded-lg bg-muted/50 p-3">
                 <p className="text-xs text-muted-foreground">Respiratory Rate</p>
-                <p className="mt-1 text-lg font-semibold">{intakeNotes.vitals.respiratoryRate}</p>
+                <p className="mt-1 text-lg font-semibold">{intakeNotes?.vitals?.respiratoryRate || 'N/A'}</p>
               </div>
               <div className="col-span-2 rounded-lg bg-muted/50 p-3">
                 <p className="text-xs text-muted-foreground">Oxygen Saturation</p>
-                <p className="mt-1 text-lg font-semibold">{intakeNotes.vitals.oxygenSaturation}</p>
+                <p className="mt-1 text-lg font-semibold">{intakeNotes?.vitals?.oxygenSaturation || 'N/A'}</p>
               </div>
             </div>
           </CardContent>
@@ -96,7 +100,9 @@ export function IntakeNotesTab({ intakeNotes }: IntakeNotesTabProps) {
         </CardHeader>
         <CardContent>
           <div className="rounded-lg border border-border bg-muted/30 p-4">
-            <p className="text-sm leading-relaxed text-foreground">{intakeNotes.nurseNotes}</p>
+            <p className="text-sm leading-relaxed text-foreground">
+              {intakeNotes?.nurseNotes || <span className="text-muted-foreground italic">No nurse notes recorded</span>}
+            </p>
           </div>
         </CardContent>
       </Card>
@@ -111,10 +117,14 @@ export function IntakeNotesTab({ intakeNotes }: IntakeNotesTabProps) {
         </CardHeader>
         <CardContent>
           <div className="rounded-lg border border-dashed border-border bg-muted/20 p-4">
-            <p className="text-sm leading-relaxed text-foreground">{intakeNotes.transcriptionNotes}</p>
-            <p className="mt-3 text-xs text-muted-foreground italic">
-              * This content was auto-generated from voice recording during patient intake.
+            <p className="text-sm leading-relaxed text-foreground">
+              {intakeNotes?.transcriptionNotes || <span className="text-muted-foreground italic">No voice transcript available</span>}
             </p>
+            {intakeNotes?.transcriptionNotes && (
+              <p className="mt-3 text-xs text-muted-foreground italic">
+                * This content was auto-generated from voice recording during patient intake.
+              </p>
+            )}
           </div>
         </CardContent>
       </Card>

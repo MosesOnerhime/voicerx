@@ -68,10 +68,10 @@ export function PatientTable({ patients, compact = false }: PatientTableProps) {
                   <StatusBadge status={patient.status} />
                 </td>
                 <td className="whitespace-nowrap px-5 py-4 text-right">
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     size="sm"
-                    onClick={() => navigate(`/doctor/patient/${patient.patient.id}`)}
+                    onClick={() => navigate(`/doctor/patient/${patient.appointmentId}`)}
                     className="gap-1.5"
                   >
                     <Eye className="h-4 w-4" />

@@ -8,6 +8,8 @@ import { useNavigate } from 'react-router-dom';
 import { type Appointment } from '../../services/types/db';
 import axios from 'axios';
 
+const API_URL = 'http://localhost:5001/api';
+
 // UI Components
 import { toast } from "../../hooks/use-toast";
 import { Button } from "../../components/ui/button";
@@ -74,13 +76,18 @@ export default function NurseOverview() {
     const fetchDoctors = async () => {
         if (!token) return;
         try {
-            const response = await axios.get('/api/doctors/available', {
+            // Use the assign-doctor endpoint with ?available=true to get only available doctors
+            const response = await axios.get(`${API_URL}/appointments/assign-doctor?available=true`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             // Map to include availability field for DoctorAssignmentDialog
-            const doctors = (response.data.doctors || []).map((doc: AvailableDoctor) => ({
-                ...doc,
-                availability: "available" as const,
+            const doctors = (response.data.doctors || []).map((doc: any) => ({
+                id: doc.id,
+                name: doc.fullName || `Dr. ${doc.firstName} ${doc.lastName}`,
+                specialty: doc.specialization || 'General',
+                currentPatients: doc.queueCount || 0,
+                availability: doc.isAvailable ? "available" as const : "busy" as const,
+                isAvailable: doc.isAvailable,
             }));
             setAvailableDoctors(doctors);
         } catch (error) {
@@ -131,6 +138,35 @@ export default function NurseOverview() {
     const handleOpenDoctorAssignment = (apt: Appointment) => {
         setSelectedAppointment(apt);
         setDoctorDialogOpen(true);
+    };
+
+    const handleAssignDoctor = async (doctorId: string) => {
+        if (!token || !selectedAppointment) return;
+
+        try {
+            await axios.post(`${API_URL}/appointments/assign-doctor`, {
+                appointmentId: selectedAppointment.id,
+                doctorId: doctorId,
+            }, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            toast({
+                title: "Doctor Assigned",
+                description: `Patient has been assigned to the doctor successfully.`
+            });
+
+            // Refresh the queue and doctors list
+            fetchQueue();
+            fetchDoctors();
+        } catch (error: any) {
+            console.error("Failed to assign doctor:", error);
+            toast({
+                variant: "destructive",
+                title: "Assignment Failed",
+                description: error.response?.data?.error || "Failed to assign doctor. Please try again."
+            });
+        }
     };
 
     const handleRefresh = () => {
@@ -211,6 +247,7 @@ export default function NurseOverview() {
                                         status={apt.status}
                                         priority={apt.priority}
                                         waitingTime={`${new Date(apt.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
+                                        assignedDoctor={apt.assignedDoctor ? `Dr. ${apt.assignedDoctor.firstName} ${apt.assignedDoctor.lastName}` : undefined}
 
                                         // Actions
                                         onClick={() => handleRecordVitals(apt)}
@@ -285,7 +322,7 @@ export default function NurseOverview() {
                     patientName={`${selectedAppointment.patient?.firstName} ${selectedAppointment.patient?.lastName}`}
                     patientId={selectedAppointment.patientId}
                     doctors={availableDoctors}
-                    onAssign={() => { fetchQueue(); fetchDoctors(); }}
+                    onAssign={handleAssignDoctor}
                 />
             )}
         </div>

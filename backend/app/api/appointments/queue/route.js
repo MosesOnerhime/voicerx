@@ -51,11 +51,12 @@ export async function GET(request) {
 
     // Get doctor's queue
     // Priority order: EMERGENCY > URGENT > NORMAL, then FIFO
+    // Include IN_CONSULTATION so doctors can see patients they're currently seeing
     const queue = await prisma.appointment.findMany({
       where: {
         assignedDoctorId: decoded.userId,
         status: {
-          in: ['IN_QUEUE', 'ASSIGNED'],
+          in: ['IN_QUEUE', 'ASSIGNED', 'IN_CONSULTATION'],
         },
       },
       include: {
