@@ -74,7 +74,7 @@ export default function NurseOverview() {
     const fetchDoctors = async () => {
         if (!token) return;
         try {
-            const response = await axios.get('/api/doctors/available', {
+            const response = await axios.get('/appointments/assign-doctor?available=true', {
                 headers: { Authorization: `Bearer ${token}` },
             });
             // Map to include availability field for DoctorAssignmentDialog

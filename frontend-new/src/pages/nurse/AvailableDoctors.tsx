@@ -31,8 +31,8 @@ const AvailableDoctors = () => {
     try {
       setIsLoading(true);
       const url = showAvailableOnly 
-        ? 'http://localhost:3000/api/doctors/available?available=true'
-        : 'http://localhost:3000/api/doctors/available';
+        ? 'http://localhost:5001/api/appointments/assign-doctor?available=true'
+        : 'http://localhost:5001/api/appointments/assign-doctor?available=true';
         
       const response = await fetch(url, {
         method: 'GET',
