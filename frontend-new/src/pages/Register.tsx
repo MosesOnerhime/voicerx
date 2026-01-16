@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { authApi } from "../components/auth";
+// import { authApi } from "../components/auth";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginFormValues } from "../services/schema";
@@ -63,50 +63,64 @@ const Register = () => {
   };
 
   const onSubmit = async (data: LoginFormValues) => {
-    try {
-      clearErrors("root");
-      console.log("Sign in attempt with:", data.email);
-      
-      const result = await authApi.manualLogin(data);
-      
-      if (!result || !result.user) {
-         throw new Error("User not found");
-      }
+  try {
+    clearErrors("root");
+    console.log("Sign in attempt with:", data.email);
+    
+    // Replace authApi.manualLogin with direct fetch call
+    const response = await fetch("http://localhost:5001/api/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: data.email,
+        password: data.password,
+      }),
+    });
 
-      dispatch(setCredentials({ user: result.user, token: result.token }));
-      
-      const rolePaths: Record<string, string> = {
-        admin: "/admin/dashboard",
-        nurse: "/nurse/dashboard",
-        doctor: "/doctor/dashboard",
-        pharmacist: "/pharmacy/dashboard",
-      };
-
-      const userRole = result.user.role?.toLowerCase();
-      const targetPath = rolePaths[userRole] || "/dashboard";
-
-      navigate(targetPath);
-
-    } catch (error: any) {
-      console.error("Login Error:", error);
-      
-      let errorMessage = "Something went wrong. Please try again.";
-      
-      if (error.response?.status === 404 || error.message === "User not found") {
-        errorMessage = "User not found. Please check your email.";
-      } else if (error.response?.status === 401) {
-        errorMessage = "Invalid password. Please try again.";
-      } else if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      }
-
-      setError("root", { 
-        type: "manual",
-        message: errorMessage 
-      });
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Login failed");
     }
-  };
 
+    const result = await response.json();
+    
+    if (!result || !result.user) {
+      throw new Error("User not found");
+    }
+
+    dispatch(setCredentials({ user: result.user, token: result.token }));
+    
+    const rolePaths: Record<string, string> = {
+      admin: "/admin/dashboard",
+      nurse: "/nurse/dashboard",
+      doctor: "/doctor/dashboard",
+      pharmacist: "/pharmacy/dashboard",
+    };
+
+    const userRole = result.user.role?.toLowerCase();
+    const targetPath = rolePaths[userRole] || "/dashboard";
+
+    navigate(targetPath);
+
+  } catch (error: any) {
+    console.error("Login Error:", error);
+    
+    let errorMessage = "Something went wrong. Please try again.";
+    
+    if (error.message === "User not found") {
+      errorMessage = "User not found. Please check your email.";
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+
+    setError("root", { 
+      type: "manual",
+      message: errorMessage 
+    });
+  }
+};
   return (
     <div className="flex min-h-screen font-subheading">
       {/* Left Side - Visual */}

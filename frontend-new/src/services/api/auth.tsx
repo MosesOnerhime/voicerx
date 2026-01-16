@@ -64,6 +64,8 @@ export const authApi = {
     return response.data;
   },
 
+
+ 
   // POST - Register new hospital with admin user
   registerHospital: async (
     payload: HospitalRegistrationPayload

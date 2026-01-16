@@ -143,7 +143,7 @@ const UploadStaff = () => {
       }
 
       // Call the backend API
-      const response = await fetch('/api/users/upload', {
+      const response = await fetch('http://localhost:5001/api/users/upload', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

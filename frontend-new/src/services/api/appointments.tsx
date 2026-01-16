@@ -1,26 +1,23 @@
+// services/api/appointments.ts
 import axios from 'axios';
 import { type Appointment } from '../types/db';
 
-const API_URL = '/api';
+const API_URL = 'http://localhost:5001/api'; // Use full URL
 
 export const appointmentApi = {
   getNurseQueue: async (token: string) => {
-    // 1. Fetch all appointments
     const response = await axios.get(`${API_URL}/appointments`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
-    // Backend returns { appointments: [...], pagination: {...} }
     const appointments = response.data.appointments || [];
-
-    // 2. Filter logic (if backend sends everything)
     const hiddenStatuses = ['COMPLETED', 'CANCELLED'];
 
     return appointments.filter((apt: Appointment) =>
       !hiddenStatuses.includes(apt.status)
     );
   },
-  // Create a new appointment entry in the database
+  
   create: async (payload: any, token: string) => {
     const response = await axios.post(`${API_URL}/appointments`, payload, {
       headers: {
