@@ -10,6 +10,7 @@
 // 2. Generates JWT token for authentication
 // 3. Sets token in httpOnly cookie (secure)
 // 4. Returns user and hospital information
+// 5. Marks doctors as available upon login
 // ============================================================
 
 import { compare } from 'bcryptjs';
@@ -80,10 +81,20 @@ export async function POST(request) {
       );
     }
 
-    // Update last login time
-    await prisma.user.update({
+    // 🔥 NEW: Update last login time AND mark doctors as available
+    const updateData = {
+      lastLogin: new Date(),
+    };
+
+    // If user is a doctor, mark them as available on login
+    if (user.role === 'DOCTOR') {
+      updateData.isAvailable = true;
+      updateData.currentAppointmentId = null; // Clear any stuck appointment
+    }
+
+    const updatedUser = await prisma.user.update({
       where: { id: user.id },
-      data: { lastLogin: new Date() },
+      data: updateData,
     });
 
     // Generate JWT token with user information
@@ -105,13 +116,13 @@ export async function POST(request) {
       {
         message: 'Login successful',
         user: {
-          id: user.id,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-          role: user.role,
-          specialization: user.specialization,
-          isAvailable: user.isAvailable,
+          id: updatedUser.id,
+          firstName: updatedUser.firstName,
+          lastName: updatedUser.lastName,
+          email: updatedUser.email,
+          role: updatedUser.role,
+          specialization: updatedUser.specialization,
+          isAvailable: updatedUser.isAvailable, // Return updated availability
         },
         hospital: {
           id: user.hospital.id,
