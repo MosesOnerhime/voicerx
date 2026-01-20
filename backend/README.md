@@ -1,6 +1,6 @@
-# VoiceRX Backend
+# VoiceRX
 
-A Next.js API backend for healthcare management with voice-enabled features.
+A modern, voice-enabled healthcare management platform designed to streamline hospital operations, patient registration, appointment scheduling, and prescription management.
 
 ## Tech Stack
 
