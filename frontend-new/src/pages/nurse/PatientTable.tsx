@@ -103,7 +103,7 @@ const PatientTable = () => {
           <Button 
             size="sm" 
             className="bg-primary text-white hover:opacity-90"
-            onClick={() => navigate("/nurse/patients/new")}
+            onClick={() => navigate("/nurse/register-patient")}
           >
             <UserPlus className="h-4 w-4 mr-2" />
             Register New Patient
